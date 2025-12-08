@@ -1,24 +1,33 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RoleGate } from '@/components/RoleGate/RoleGate';
-import { db } from '@/lib/db';
+import { useDocumentStore } from '@/stores/documentStore';
+import { useAuthStore } from '@/stores/authStore';
 import './DocumentListPage.css';
 
 export function DocumentListPage() {
-  const [dbStatus, setDbStatus] = useState<'checking' | 'ready' | 'error'>('checking');
+  const { documents, loading, error, loadDocuments, createDocument } = useDocumentStore();
+  const currentUser = useAuthStore(state => state.currentUser);
 
   useEffect(() => {
-    // Test database initialization
-    db.open()
-      .then(() => {
-        setDbStatus('ready');
-      })
-      .catch((error) => {
-        console.error('Database failed to initialize:', error);
-        setDbStatus('error');
+    loadDocuments();
+  }, [loadDocuments]);
+
+  const handleCreateTestDocument = async () => {
+    if (!currentUser) return;
+
+    try {
+      await createDocument({
+        name: `Test Document ${Date.now()}`,
+        status: 'draft',
+        currentVersionId: 'temp-version-id',
+        createdBy: currentUser.id,
       });
-  }, []);
+    } catch (err) {
+      console.error('Failed to create test document:', err);
+    }
+  };
 
   return (
     <div className="document-list-page">
@@ -26,19 +35,50 @@ export function DocumentListPage() {
         <div className="document-list-page__header">
           <h2 className="document-list-page__title">Documents</h2>
 
-          <RoleGate allowedRoles={['admin']}>
-            <Button>Upload Document (Admin Only)</Button>
-          </RoleGate>
+          <div className="document-list-page__actions">
+            <Button onClick={handleCreateTestDocument} variant="outline" size="sm">
+              Create Test Document
+            </Button>
+            <RoleGate allowedRoles={['admin']}>
+              <Button>Upload Document (Admin Only)</Button>
+            </RoleGate>
+          </div>
         </div>
+
+        {error && (
+          <div className="document-list-page__error">
+            Error: {error}
+          </div>
+        )}
+
+        {loading && (
+          <div className="document-list-page__loading">
+            Loading documents...
+          </div>
+        )}
+
+        {!loading && documents.length > 0 && (
+          <div className="document-list-page__list">
+            <h3>Documents ({documents.length})</h3>
+            {documents.map(doc => (
+              <Card key={doc.id} className="document-list-page__document-card">
+                <CardHeader>
+                  <CardTitle>{doc.name}</CardTitle>
+                  <CardDescription>
+                    Status: {doc.status} | Created: {new Date(doc.createdAt).toLocaleString()}
+                  </CardDescription>
+                </CardHeader>
+              </Card>
+            ))}
+          </div>
+        )}
 
         <div className="document-list-page__demo">
           <Card>
             <CardHeader>
-              <CardTitle>E2-S1: Dexie Database Status</CardTitle>
+              <CardTitle>E2-S2: Document Store Demo</CardTitle>
               <CardDescription>
-                Database: {dbStatus === 'ready' ? '✓ Ready' : dbStatus === 'checking' ? 'Checking...' : '✗ Error'}
-                {' | '}
-                Full document list will be implemented in E2-S5.
+                Testing document store with Dexie persistence. Click "Create Test Document" to add documents.
               </CardDescription>
             </CardHeader>
             <CardContent className="document-list-page__demo-content">
