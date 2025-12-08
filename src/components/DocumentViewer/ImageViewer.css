@@ -74,6 +74,11 @@
   align-items: center;
 }
 
+.image-viewer__image-container {
+  position: relative;
+  display: inline-block;
+}
+
 .image-viewer__page-number {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);

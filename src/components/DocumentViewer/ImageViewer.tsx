@@ -1,4 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
+import { AnnotationLayer } from './AnnotationLayer';
+import type { Comment, LocationAnchor } from '@/types';
 import './ImageViewer.css';
 
 type ZoomMode = 'fit-width' | 'fit-page' | 'custom';
@@ -19,14 +21,24 @@ const ZOOM_OPTIONS: ZoomOption[] = [
 
 interface ImageViewerProps {
   imageFile: Blob;
+  comments?: Comment[];
   onLoadSuccess?: () => void;
   onLoadError?: (error: Error) => void;
+  onAddAnnotation?: (pageNumber: number, anchor: LocationAnchor) => void;
+  onPinClick?: (commentId: string) => void;
+  activeCommentId?: string | null;
+  annotationsEnabled?: boolean;
 }
 
 export function ImageViewer({
   imageFile,
+  comments = [],
   onLoadSuccess,
   onLoadError,
+  onAddAnnotation,
+  onPinClick,
+  activeCommentId,
+  annotationsEnabled = false,
 }: ImageViewerProps) {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -141,15 +153,26 @@ export function ImageViewer({
         {imageUrl && (
           <div className="image-viewer__image-wrapper">
             <div className="image-viewer__page-number">PAGE 1</div>
-            <img
-              ref={imgRef}
-              src={imageUrl}
-              alt="Document"
-              className="image-viewer__image"
-              style={{ width: `${getImageWidth()}px` }}
-              onLoad={handleImageLoad}
-              onError={handleImageError}
-            />
+            <div className="image-viewer__image-container">
+              <img
+                ref={imgRef}
+                src={imageUrl}
+                alt="Document"
+                className="image-viewer__image"
+                style={{ width: `${getImageWidth()}px` }}
+                onLoad={handleImageLoad}
+                onError={handleImageError}
+              />
+              {annotationsEnabled && (
+                <AnnotationLayer
+                  pageNumber={1}
+                  comments={comments}
+                  onAddAnnotation={onAddAnnotation}
+                  onPinClick={onPinClick}
+                  activeCommentId={activeCommentId}
+                />
+              )}
+            </div>
           </div>
         )}
       </div>

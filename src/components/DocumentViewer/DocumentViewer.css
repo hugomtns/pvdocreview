@@ -79,6 +79,11 @@
   margin-bottom: 0;
 }
 
+.document-viewer__page-container {
+  position: relative;
+  display: inline-block;
+}
+
 .document-viewer__page-number {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);

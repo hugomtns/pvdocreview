@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
+import { AnnotationLayer } from './AnnotationLayer';
+import type { Comment, LocationAnchor } from '@/types';
 import './DocumentViewer.css';
 
 // Configure PDF.js worker
@@ -23,14 +25,24 @@ const ZOOM_OPTIONS: ZoomOption[] = [
 
 interface DocumentViewerProps {
   pdfFile: Blob;
+  comments?: Comment[];
   onLoadSuccess?: (numPages: number) => void;
   onLoadError?: (error: Error) => void;
+  onAddAnnotation?: (pageNumber: number, anchor: LocationAnchor) => void;
+  onPinClick?: (commentId: string) => void;
+  activeCommentId?: string | null;
+  annotationsEnabled?: boolean;
 }
 
 export function DocumentViewer({
   pdfFile,
+  comments = [],
   onLoadSuccess,
   onLoadError,
+  onAddAnnotation,
+  onPinClick,
+  activeCommentId,
+  annotationsEnabled = false,
 }: DocumentViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -162,17 +174,28 @@ export function DocumentViewer({
               <div className="document-viewer__page-number">
                 Page {index + 1}
               </div>
-              <Page
-                pageNumber={index + 1}
-                width={getPageWidth()}
-                renderTextLayer={true}
-                renderAnnotationLayer={true}
-                loading={
-                  <div className="document-viewer__page-loading">
-                    Loading page {index + 1}...
-                  </div>
-                }
-              />
+              <div className="document-viewer__page-container">
+                <Page
+                  pageNumber={index + 1}
+                  width={getPageWidth()}
+                  renderTextLayer={true}
+                  renderAnnotationLayer={true}
+                  loading={
+                    <div className="document-viewer__page-loading">
+                      Loading page {index + 1}...
+                    </div>
+                  }
+                />
+                {annotationsEnabled && (
+                  <AnnotationLayer
+                    pageNumber={index + 1}
+                    comments={comments}
+                    onAddAnnotation={onAddAnnotation}
+                    onPinClick={onPinClick}
+                    activeCommentId={activeCommentId}
+                  />
+                )}
+              </div>
             </div>
           ))}
         </Document>

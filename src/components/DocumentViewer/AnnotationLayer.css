@@ -1,0 +1,72 @@
+.annotation-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: crosshair;
+  user-select: none;
+}
+
+.annotation-layer--disabled {
+  pointer-events: none;
+  cursor: default;
+}
+
+.annotation-layer__pin {
+  position: absolute;
+  width: var(--annotation-pin-size);
+  height: var(--annotation-pin-size);
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background-color: var(--annotation-pin-active);
+  border: 2px solid var(--color-background);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: var(--z-base);
+  padding: 0;
+}
+
+.annotation-layer__pin:hover {
+  transform: translate(-50%, -50%) scale(1.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+  z-index: calc(var(--z-base) + 1);
+}
+
+.annotation-layer__pin--active {
+  background-color: var(--color-primary);
+  border-color: var(--color-primary-light);
+  transform: translate(-50%, -50%) scale(1.3);
+  box-shadow: 0 4px 16px rgba(13, 110, 253, 0.5);
+  z-index: calc(var(--z-base) + 2);
+}
+
+.annotation-layer__pin--active:hover {
+  transform: translate(-50%, -50%) scale(1.4);
+}
+
+.annotation-layer__pin--resolved {
+  background-color: var(--annotation-pin-resolved);
+  opacity: 0.6;
+}
+
+.annotation-layer__pin--resolved:hover {
+  opacity: 0.8;
+}
+
+.annotation-layer__pin-number {
+  font-size: 11px;
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-inverse);
+  line-height: 1;
+  pointer-events: none;
+}
+
+/* Ensure pins are visible on images */
+.image-viewer__image-wrapper {
+  position: relative;
+}
