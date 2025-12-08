@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RoleGate } from '@/components/RoleGate/RoleGate';
 import { DocumentUploadDialog } from '@/components/DocumentUpload/DocumentUploadDialog';
+import { DocumentList } from '@/components/DocumentList/DocumentList';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useAuthStore } from '@/stores/authStore';
 import './DocumentListPage.css';
@@ -60,21 +61,7 @@ export function DocumentListPage() {
           </div>
         )}
 
-        {!loading && documents.length > 0 && (
-          <div className="document-list-page__list">
-            <h3>Documents ({documents.length})</h3>
-            {documents.map(doc => (
-              <Card key={doc.id} className="document-list-page__document-card">
-                <CardHeader>
-                  <CardTitle>{doc.name}</CardTitle>
-                  <CardDescription>
-                    Status: {doc.status} | Created: {new Date(doc.createdAt).toLocaleString()}
-                  </CardDescription>
-                </CardHeader>
-              </Card>
-            ))}
-          </div>
-        )}
+        {!loading && <DocumentList documents={documents} />}
 
         <div className="document-list-page__demo">
           <Card>

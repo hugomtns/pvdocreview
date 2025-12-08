@@ -26,12 +26,19 @@
   /* Colors - Semantic */
   --color-success: #198754;
   --color-success-light: #d1e7dd;
+  --color-success-dark: #146c43;
   --color-warning: #ffc107;
   --color-warning-light: #fff3cd;
+  --color-warning-dark: #997404;
   --color-error: #dc3545;
   --color-error-light: #f8d7da;
+  --color-error-dark: #b02a37;
   --color-info: #0dcaf0;
   --color-info-light: #cff4fc;
+  --color-info-dark: #087990;
+  --color-neutral: #6c757d;
+  --color-neutral-light: #e9ecef;
+  --color-neutral-dark: #495057;
 
   /* Colors - Role Badges */
   --color-role-viewer: #6c757d;
