@@ -15,11 +15,35 @@
   margin: 0 0 var(--spacing-lg) 0;
 }
 
-.document-review-page__placeholder {
+.document-review-page__loading {
   padding: var(--spacing-2xl);
   text-align: center;
   color: var(--color-text-secondary);
-  background-color: var(--color-surface);
-  border-radius: var(--radius-lg);
   font-style: italic;
+}
+
+.document-review-page__error {
+  padding: var(--spacing-md);
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-lg);
+}
+
+.document-review-page__viewer {
+  margin-bottom: var(--spacing-lg);
+  display: flex;
+  justify-content: center;
+}
+
+.document-review-page__note {
+  padding: var(--spacing-md);
+  text-align: center;
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-style: italic;
+  margin: 0;
 }

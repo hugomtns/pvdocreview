@@ -21,8 +21,10 @@
     "jspdf": "^3.0.4",
     "lucide-react": "^0.556.0",
     "mammoth": "^1.11.0",
+    "pdfjs-dist": "^5.4.449",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-pdf": "^10.2.0",
     "react-router-dom": "^6.28.0",
     "tailwind-merge": "^3.4.0",
     "zustand": "^5.0.9"
