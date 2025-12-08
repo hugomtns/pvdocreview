@@ -1,9 +1,25 @@
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RoleGate } from '@/components/RoleGate/RoleGate';
+import { db } from '@/lib/db';
 import './DocumentListPage.css';
 
 export function DocumentListPage() {
+  const [dbStatus, setDbStatus] = useState<'checking' | 'ready' | 'error'>('checking');
+
+  useEffect(() => {
+    // Test database initialization
+    db.open()
+      .then(() => {
+        setDbStatus('ready');
+      })
+      .catch((error) => {
+        console.error('Database failed to initialize:', error);
+        setDbStatus('error');
+      });
+  }, []);
+
   return (
     <div className="document-list-page">
       <div className="document-list-page__container">
@@ -18,9 +34,11 @@ export function DocumentListPage() {
         <div className="document-list-page__demo">
           <Card>
             <CardHeader>
-              <CardTitle>E1-S7: RoleGate Component Demo</CardTitle>
+              <CardTitle>E2-S1: Dexie Database Status</CardTitle>
               <CardDescription>
-                Testing role-based UI rendering. Full document list will be implemented in E2-S5.
+                Database: {dbStatus === 'ready' ? '✓ Ready' : dbStatus === 'checking' ? 'Checking...' : '✗ Error'}
+                {' | '}
+                Full document list will be implemented in E2-S5.
               </CardDescription>
             </CardHeader>
             <CardContent className="document-list-page__demo-content">
