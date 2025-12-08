@@ -4,6 +4,7 @@ import { useDocumentStore } from '@/stores/documentStore';
 import { StatusBadge } from '@/components/StatusBadge/StatusBadge';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
+import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
 import type { DocumentVersion } from '@/types';
 import './DocumentReviewPage.css';
 
@@ -96,7 +97,13 @@ export function DocumentReviewPage() {
         </aside>
 
         <main className="document-review-page__main">
-          {version && <DocumentViewer pdfFile={version.pdfFile} />}
+          {version && (
+            version.fileType === 'image' ? (
+              <ImageViewer imageFile={version.pdfFile} />
+            ) : (
+              <DocumentViewer pdfFile={version.pdfFile} />
+            )
+          )}
         </main>
 
         <aside className="document-review-page__sidebar document-review-page__sidebar--right">
