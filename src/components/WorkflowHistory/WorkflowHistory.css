@@ -1,0 +1,113 @@
+.workflow-history {
+  padding: var(--spacing-md);
+}
+
+.workflow-history__loading,
+.workflow-history__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-text-muted);
+}
+
+.workflow-history__empty p {
+  margin: 0 0 var(--spacing-xs) 0;
+  font-size: var(--font-size-sm);
+}
+
+.workflow-history__empty-hint {
+  font-size: var(--font-size-xs);
+  font-style: italic;
+}
+
+.workflow-history__timeline {
+  display: flex;
+  flex-direction: column;
+}
+
+.workflow-history__event {
+  display: flex;
+  gap: var(--spacing-md);
+  position: relative;
+}
+
+.workflow-history__event:not(:last-child) {
+  margin-bottom: var(--spacing-lg);
+}
+
+.workflow-history__event-marker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.workflow-history__event-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  border: 2px solid var(--color-background);
+  box-shadow: 0 0 0 2px var(--color-primary);
+  flex-shrink: 0;
+}
+
+.workflow-history__event-line {
+  width: 2px;
+  flex: 1;
+  background-color: var(--color-border);
+  margin-top: 4px;
+}
+
+.workflow-history__event-content {
+  flex: 1;
+  padding-bottom: var(--spacing-sm);
+}
+
+.workflow-history__event-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-xs);
+}
+
+.workflow-history__event-action {
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.workflow-history__event-time {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+}
+
+.workflow-history__event-actor {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin-bottom: var(--spacing-xs);
+}
+
+.workflow-history__event-comment {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  border-left: 3px solid var(--color-primary-light);
+  margin-top: var(--spacing-xs);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+@media (max-width: 768px) {
+  .workflow-history__event-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}

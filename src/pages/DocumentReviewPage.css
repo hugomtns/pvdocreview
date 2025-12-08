@@ -74,6 +74,12 @@
   padding: var(--spacing-md);
 }
 
+.document-review-page__sidebar-divider {
+  height: 1px;
+  background-color: var(--color-border);
+  margin: var(--spacing-md) 0;
+}
+
 /* Main viewer area */
 .document-review-page__main {
   display: flex;

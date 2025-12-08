@@ -7,6 +7,7 @@ import { StatusBadge } from '@/components/StatusBadge/StatusBadge';
 import { CommentPanel } from '@/components/CommentPanel/CommentPanel';
 import { CommentInput } from '@/components/CommentPanel/CommentInput';
 import { WorkflowActions } from '@/components/WorkflowActions/WorkflowActions';
+import { WorkflowHistory } from '@/components/WorkflowHistory/WorkflowHistory';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
@@ -24,6 +25,7 @@ export function DocumentReviewPage() {
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [annotationMode, setAnnotationMode] = useState(false);
   const [pendingAnnotation, setPendingAnnotation] = useState<{ pageNumber: number; anchor: LocationAnchor } | null>(null);
+  const [workflowHistoryKey, setWorkflowHistoryKey] = useState(0);
 
   useEffect(() => {
     const loadDocumentVersion = async () => {
@@ -157,6 +159,9 @@ export function DocumentReviewPage() {
 
       // Update the document status
       await updateDocumentStatus(document.id, toStatus);
+
+      // Trigger workflow history reload
+      setWorkflowHistoryKey(prev => prev + 1);
     } catch (err) {
       console.error('Failed to execute workflow action:', err);
       throw err;
@@ -209,6 +214,13 @@ export function DocumentReviewPage() {
 
       <div className="document-review-page__layout">
         <aside className="document-review-page__sidebar document-review-page__sidebar--left">
+          <div className="document-review-page__sidebar-header">
+            <h2>Workflow History</h2>
+          </div>
+          <div className="document-review-page__sidebar-content">
+            <WorkflowHistory key={workflowHistoryKey} documentId={document.id} />
+          </div>
+          <div className="document-review-page__sidebar-divider" />
           <div className="document-review-page__sidebar-header">
             <h2>Versions</h2>
           </div>
