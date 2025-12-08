@@ -1,0 +1,131 @@
+.comment-thread {
+  padding: var(--spacing-md);
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--spacing-md);
+  transition: all var(--transition-fast);
+}
+
+.comment-thread:last-child {
+  margin-bottom: 0;
+}
+
+.comment-thread--active {
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px var(--color-primary-light);
+}
+
+.comment-thread--resolved {
+  opacity: 0.7;
+  background-color: var(--color-surface);
+}
+
+.comment-thread__header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--spacing-sm);
+  gap: var(--spacing-sm);
+}
+
+.comment-thread__author-info {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.comment-thread__author-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.comment-thread__role-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: 2px var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.comment-thread__role-badge--viewer {
+  background-color: var(--color-neutral-light);
+  color: var(--color-neutral-dark);
+}
+
+.comment-thread__role-badge--reviewer {
+  background-color: var(--color-info-light);
+  color: var(--color-info-dark);
+}
+
+.comment-thread__role-badge--admin {
+  background-color: var(--color-primary-light);
+  color: var(--color-primary);
+}
+
+.comment-thread__pin-link {
+  font-size: var(--font-size-xs);
+  color: var(--color-primary);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  transition: background-color var(--transition-fast);
+  white-space: nowrap;
+}
+
+.comment-thread__pin-link:hover {
+  background-color: var(--color-primary-light);
+}
+
+.comment-thread__content {
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-normal);
+  color: var(--color-text-primary);
+  margin-bottom: var(--spacing-sm);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.comment-thread__footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
+.comment-thread__timestamp {
+  font-size: var(--font-size-xs);
+  color: var(--color-text-muted);
+}
+
+.comment-thread__resolved-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-success);
+  padding: 2px var(--spacing-xs);
+  background-color: var(--color-success-light);
+  border-radius: var(--radius-sm);
+}
+
+.comment-thread__resolve-button {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  color: var(--color-primary);
+  background: none;
+  border: 1px solid var(--color-primary);
+  padding: 4px var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.comment-thread__resolve-button:hover {
+  background-color: var(--color-primary);
+  color: var(--color-text-inverse);
+}
