@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDocumentStore } from '@/stores/documentStore';
 import { db } from '@/lib/db';
-import { PageRenderer } from '@/components/DocumentViewer/PageRenderer';
+import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import type { DocumentVersion } from '@/types';
 import './DocumentReviewPage.css';
 
@@ -70,16 +70,12 @@ export function DocumentReviewPage() {
 
         {version && (
           <div className="document-review-page__viewer">
-            <PageRenderer
-              pdfFile={version.pdfFile}
-              pageNumber={1}
-              width={600}
-            />
+            <DocumentViewer pdfFile={version.pdfFile} />
           </div>
         )}
 
         <p className="document-review-page__note">
-          E3-S1: Basic PDF page rendering. Full viewer in E3-S2, complete layout in E3-S3.
+          E3-S2: Multi-page document viewer with zoom controls. Full layout in E3-S3.
         </p>
       </div>
     </div>
