@@ -1,26 +1,35 @@
 import { useState, useEffect, useRef } from 'react';
+import { Button } from '@/components/ui/button';
 import { CommentThread } from './CommentThread';
+import { CommentInput } from './CommentInput';
 import type { Comment } from '@/types';
 import './CommentPanel.css';
 
 interface CommentPanelProps {
   comments: Comment[];
   onResolve?: (commentId: string) => void;
+  onUnresolve?: (commentId: string) => void;
   onPinClick?: (commentId: string) => void;
+  onAddDocumentComment?: (content: string) => void;
   activeCommentId?: string | null;
   canResolve?: boolean;
+  canComment?: boolean;
   loading?: boolean;
 }
 
 export function CommentPanel({
   comments,
   onResolve,
+  onUnresolve,
   onPinClick,
+  onAddDocumentComment,
   activeCommentId,
   canResolve = false,
+  canComment = false,
   loading = false,
 }: CommentPanelProps) {
   const [showResolved, setShowResolved] = useState(true);
+  const [isAddingComment, setIsAddingComment] = useState(false);
   const commentRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
 
   // Scroll to active comment
@@ -58,6 +67,13 @@ export function CommentPanel({
   const totalComments = comments.length;
   const unresolvedCount = comments.filter(c => !c.resolved).length;
 
+  const handleAddComment = (content: string) => {
+    if (onAddDocumentComment) {
+      onAddDocumentComment(content);
+      setIsAddingComment(false);
+    }
+  };
+
   return (
     <div className="comment-panel">
       <div className="comment-panel__header">
@@ -76,6 +92,28 @@ export function CommentPanel({
         </button>
       </div>
 
+      {canComment && !isAddingComment && (
+        <div className="comment-panel__add-button-container">
+          <Button
+            size="sm"
+            onClick={() => setIsAddingComment(true)}
+            className="comment-panel__add-button"
+          >
+            + Add Document Comment
+          </Button>
+        </div>
+      )}
+
+      {isAddingComment && (
+        <div className="comment-panel__input-container">
+          <CommentInput
+            onSubmit={handleAddComment}
+            onCancel={() => setIsAddingComment(false)}
+            placeholder="Add a general comment about the document..."
+          />
+        </div>
+      )}
+
       <div className="comment-panel__content">
         {filteredLocationComments.length > 0 && (
           <div className="comment-panel__section">
@@ -91,6 +129,7 @@ export function CommentPanel({
                   <CommentThread
                     comment={comment}
                     onResolve={onResolve}
+                    onUnresolve={onUnresolve}
                     onPinClick={onPinClick}
                     isActive={comment.id === activeCommentId}
                     canResolve={canResolve}
@@ -115,6 +154,7 @@ export function CommentPanel({
                   <CommentThread
                     comment={comment}
                     onResolve={onResolve}
+                    onUnresolve={onUnresolve}
                     isActive={comment.id === activeCommentId}
                     canResolve={canResolve}
                   />

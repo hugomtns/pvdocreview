@@ -4,6 +4,7 @@ import './CommentThread.css';
 interface CommentThreadProps {
   comment: Comment;
   onResolve?: (commentId: string) => void;
+  onUnresolve?: (commentId: string) => void;
   onPinClick?: (commentId: string) => void;
   isActive?: boolean;
   canResolve?: boolean;
@@ -12,6 +13,7 @@ interface CommentThreadProps {
 export function CommentThread({
   comment,
   onResolve,
+  onUnresolve,
   onPinClick,
   isActive = false,
   canResolve = false,
@@ -61,7 +63,17 @@ export function CommentThread({
           {formatDate(comment.createdAt)}
         </span>
         {comment.resolved && (
-          <span className="comment-thread__resolved-badge">Resolved</span>
+          <>
+            <span className="comment-thread__resolved-badge">Resolved</span>
+            {canResolve && onUnresolve && (
+              <button
+                className="comment-thread__unresolve-button"
+                onClick={() => onUnresolve(comment.id)}
+              >
+                Reopen
+              </button>
+            )}
+          </>
         )}
         {!comment.resolved && canResolve && onResolve && (
           <button

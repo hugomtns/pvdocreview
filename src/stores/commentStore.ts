@@ -14,6 +14,7 @@ interface CommentState {
   addComment: (comment: Omit<Comment, 'id' | 'createdAt' | 'updatedAt'>) => Promise<Comment>;
   updateComment: (id: string, content: string) => Promise<void>;
   resolveComment: (id: string) => Promise<void>;
+  unresolveComment: (id: string) => Promise<void>;
   clearComments: () => void;
 }
 
@@ -129,6 +130,35 @@ export const useCommentStore = create<CommentState>((set, get) => ({
     } catch (err) {
       set({
         error: err instanceof Error ? err.message : 'Failed to resolve comment',
+        loading: false,
+      });
+      throw err;
+    }
+  },
+
+  unresolveComment: async (id: string) => {
+    const state = get();
+    set({ loading: true, error: null });
+
+    try {
+      const now = new Date();
+
+      // Update in database
+      await db.comments.update(id, {
+        resolved: false,
+        updatedAt: now,
+      });
+
+      // Update store
+      const updatedComments = state.comments.map(comment =>
+        comment.id === id
+          ? { ...comment, resolved: false, updatedAt: now }
+          : comment
+      );
+      set({ comments: updatedComments, loading: false });
+    } catch (err) {
+      set({
+        error: err instanceof Error ? err.message : 'Failed to unresolve comment',
         loading: false,
       });
       throw err;

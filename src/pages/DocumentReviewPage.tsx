@@ -5,21 +5,24 @@ import { useCommentStore } from '@/stores/commentStore';
 import { useAuthStore } from '@/stores/authStore';
 import { StatusBadge } from '@/components/StatusBadge/StatusBadge';
 import { CommentPanel } from '@/components/CommentPanel/CommentPanel';
+import { CommentInput } from '@/components/CommentPanel/CommentInput';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
-import type { DocumentVersion } from '@/types';
+import type { DocumentVersion, LocationAnchor } from '@/types';
 import './DocumentReviewPage.css';
 
 export function DocumentReviewPage() {
   const { id } = useParams<{ id: string }>();
   const { getDocument } = useDocumentStore();
-  const { comments, loading: commentsLoading, loadComments, resolveComment } = useCommentStore();
+  const { comments, loading: commentsLoading, loadComments, resolveComment, unresolveComment, addComment } = useCommentStore();
   const currentUser = useAuthStore(state => state.currentUser);
   const [version, setVersion] = useState<DocumentVersion | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
+  const [annotationMode, setAnnotationMode] = useState(false);
+  const [pendingAnnotation, setPendingAnnotation] = useState<{ pageNumber: number; anchor: LocationAnchor } | null>(null);
 
   useEffect(() => {
     const loadDocumentVersion = async () => {
@@ -72,8 +75,73 @@ export function DocumentReviewPage() {
     }
   };
 
-  // Check if user can resolve comments
+  const handleUnresolveComment = async (commentId: string) => {
+    try {
+      await unresolveComment(commentId);
+    } catch (err) {
+      console.error('Failed to unresolve comment:', err);
+    }
+  };
+
+  const handleAddDocumentComment = async (content: string) => {
+    if (!currentUser || !document || !version) return;
+
+    try {
+      await addComment({
+        documentId: document.id,
+        versionId: version.id,
+        type: 'document',
+        content,
+        authorId: currentUser.id,
+        authorName: currentUser.name,
+        authorRole: currentUser.role,
+        resolved: false,
+      });
+    } catch (err) {
+      console.error('Failed to add document comment:', err);
+    }
+  };
+
+  const handleAddLocationComment = async (pageNumber: number, anchor: LocationAnchor) => {
+    if (!currentUser || !document || !version) return;
+
+    // Show the comment input dialog
+    setPendingAnnotation({ pageNumber, anchor });
+  };
+
+  const handleSubmitLocationComment = async (content: string) => {
+    if (!currentUser || !document || !version || !pendingAnnotation) return;
+
+    try {
+      const newComment = await addComment({
+        documentId: document.id,
+        versionId: version.id,
+        type: 'location',
+        anchor: pendingAnnotation.anchor,
+        content,
+        authorId: currentUser.id,
+        authorName: currentUser.name,
+        authorRole: currentUser.role,
+        resolved: false,
+      });
+
+      // Set the new comment as active to highlight its pin
+      setActiveCommentId(newComment.id);
+
+      // Close the dialog
+      setPendingAnnotation(null);
+    } catch (err) {
+      console.error('Failed to add location comment:', err);
+    }
+  };
+
+  const handleCancelLocationComment = () => {
+    setPendingAnnotation(null);
+  };
+
+  // Check permissions
   const canResolve = currentUser?.role === 'reviewer' || currentUser?.role === 'admin';
+  const canComment = currentUser?.role === 'reviewer' || currentUser?.role === 'admin';
 
   if (loading) {
     return (
@@ -121,20 +189,35 @@ export function DocumentReviewPage() {
         </aside>
 
         <main className="document-review-page__main">
+          {canComment && version && (
+            <div className="document-review-page__toolbar">
+              <button
+                className={`document-review-page__annotation-toggle ${annotationMode ? 'document-review-page__annotation-toggle--active' : ''}`}
+                onClick={() => setAnnotationMode(!annotationMode)}
+                title={annotationMode ? 'Disable annotation mode' : 'Enable annotation mode'}
+              >
+                {annotationMode ? '✓ Annotation Mode' : '+ Annotation Mode'}
+              </button>
+            </div>
+          )}
           {version && (
             version.fileType === 'image' ? (
               <ImageViewer
                 imageFile={version.pdfFile}
                 comments={comments}
+                onAddAnnotation={canComment && annotationMode ? handleAddLocationComment : undefined}
+                onPinClick={handlePinClick}
                 activeCommentId={activeCommentId}
-                annotationsEnabled={false}
+                annotationsEnabled={canComment && annotationMode}
               />
             ) : (
               <DocumentViewer
                 pdfFile={version.pdfFile}
                 comments={comments}
+                onAddAnnotation={canComment && annotationMode ? handleAddLocationComment : undefined}
+                onPinClick={handlePinClick}
                 activeCommentId={activeCommentId}
-                annotationsEnabled={false}
+                annotationsEnabled={canComment && annotationMode}
               />
             )
           )}
@@ -148,14 +231,31 @@ export function DocumentReviewPage() {
             <CommentPanel
               comments={comments}
               onResolve={handleResolveComment}
+              onUnresolve={handleUnresolveComment}
               onPinClick={handlePinClick}
+              onAddDocumentComment={canComment ? handleAddDocumentComment : undefined}
               activeCommentId={activeCommentId}
               canResolve={canResolve}
+              canComment={canComment}
               loading={commentsLoading}
             />
           </div>
         </aside>
       </div>
+
+      {/* Location comment input modal */}
+      {pendingAnnotation && (
+        <div className="document-review-page__modal-overlay" onClick={handleCancelLocationComment}>
+          <div className="document-review-page__modal-content" onClick={(e) => e.stopPropagation()}>
+            <h3 className="document-review-page__modal-title">Add Location Comment</h3>
+            <CommentInput
+              onSubmit={handleSubmitLocationComment}
+              onCancel={handleCancelLocationComment}
+              placeholder="Add a comment about this location..."
+            />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
