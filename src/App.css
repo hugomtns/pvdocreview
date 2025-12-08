@@ -6,8 +6,19 @@
   padding: var(--spacing-lg);
 }
 
-.app h1 {
-  font-size: var(--font-size-3xl);
-  font-weight: var(--font-weight-bold);
-  color: var(--color-primary);
+.app__card {
+  max-width: 500px;
+  width: 100%;
+}
+
+.app__content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.app__form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm);
 }
