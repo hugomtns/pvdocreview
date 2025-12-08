@@ -1,0 +1,25 @@
+.document-list-page {
+  flex: 1;
+  padding: var(--spacing-xl);
+}
+
+.document-list-page__container {
+  max-width: var(--max-content-width);
+  margin: 0 auto;
+}
+
+.document-list-page__title {
+  font-size: var(--font-size-2xl);
+  font-weight: var(--font-weight-bold);
+  color: var(--color-text-primary);
+  margin: 0 0 var(--spacing-lg) 0;
+}
+
+.document-list-page__placeholder {
+  padding: var(--spacing-2xl);
+  text-align: center;
+  color: var(--color-text-secondary);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-lg);
+  font-style: italic;
+}
