@@ -6,15 +6,16 @@ import { useAuthStore } from '@/stores/authStore';
 import { StatusBadge } from '@/components/StatusBadge/StatusBadge';
 import { CommentPanel } from '@/components/CommentPanel/CommentPanel';
 import { CommentInput } from '@/components/CommentPanel/CommentInput';
+import { WorkflowActions } from '@/components/WorkflowActions/WorkflowActions';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
-import type { DocumentVersion, LocationAnchor } from '@/types';
+import type { DocumentVersion, LocationAnchor, WorkflowAction, DocumentStatus } from '@/types';
 import './DocumentReviewPage.css';
 
 export function DocumentReviewPage() {
   const { id } = useParams<{ id: string }>();
-  const { getDocument } = useDocumentStore();
+  const { getDocument, updateDocumentStatus, recordWorkflowEvent } = useDocumentStore();
   const { comments, loading: commentsLoading, loadComments, resolveComment, unresolveComment, addComment } = useCommentStore();
   const currentUser = useAuthStore(state => state.currentUser);
   const [version, setVersion] = useState<DocumentVersion | null>(null);
@@ -139,6 +140,29 @@ export function DocumentReviewPage() {
     setPendingAnnotation(null);
   };
 
+  const handleWorkflowAction = async (action: WorkflowAction, toStatus: DocumentStatus, comment?: string) => {
+    if (!currentUser || !document) return;
+
+    try {
+      // Record the workflow event
+      await recordWorkflowEvent({
+        documentId: document.id,
+        action,
+        fromStatus: document.status,
+        toStatus,
+        actorId: currentUser.id,
+        actorName: currentUser.name,
+        comment,
+      });
+
+      // Update the document status
+      await updateDocumentStatus(document.id, toStatus);
+    } catch (err) {
+      console.error('Failed to execute workflow action:', err);
+      throw err;
+    }
+  };
+
   // Check permissions
   const canResolve = currentUser?.role === 'reviewer' || currentUser?.role === 'admin';
   const canComment = currentUser?.role === 'reviewer' || currentUser?.role === 'admin';
@@ -173,6 +197,13 @@ export function DocumentReviewPage() {
         <div className="document-review-page__header-content">
           <h1 className="document-review-page__title">{document.name}</h1>
           <StatusBadge status={document.status} />
+          {currentUser && (
+            <WorkflowActions
+              currentStatus={document.status}
+              userRole={currentUser.role}
+              onStatusChange={handleWorkflowAction}
+            />
+          )}
         </div>
       </div>
 
