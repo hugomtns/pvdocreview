@@ -8,6 +8,7 @@ import { CommentPanel } from '@/components/CommentPanel/CommentPanel';
 import { CommentInput } from '@/components/CommentPanel/CommentInput';
 import { WorkflowActions } from '@/components/WorkflowActions/WorkflowActions';
 import { WorkflowHistory } from '@/components/WorkflowHistory/WorkflowHistory';
+import { VersionHistory } from '@/components/VersionHistory/VersionHistory';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
@@ -20,6 +21,7 @@ export function DocumentReviewPage() {
   const { comments, loading: commentsLoading, loadComments, resolveComment, unresolveComment, addComment } = useCommentStore();
   const currentUser = useAuthStore(state => state.currentUser);
   const [version, setVersion] = useState<DocumentVersion | null>(null);
+  const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
@@ -27,10 +29,23 @@ export function DocumentReviewPage() {
   const [pendingAnnotation, setPendingAnnotation] = useState<{ pageNumber: number; anchor: LocationAnchor } | null>(null);
   const [workflowHistoryKey, setWorkflowHistoryKey] = useState(0);
 
+  // Initialize selected version to current version
+  useEffect(() => {
+    if (!id) return;
+
+    const document = getDocument(id);
+    if (document && !selectedVersionId) {
+      setSelectedVersionId(document.currentVersionId);
+    }
+  }, [id, getDocument, selectedVersionId]);
+
+  // Load the selected version
   useEffect(() => {
     const loadDocumentVersion = async () => {
-      if (!id) {
-        setError('No document ID provided');
+      if (!id || !selectedVersionId) {
+        if (!id) {
+          setError('No document ID provided');
+        }
         setLoading(false);
         return;
       }
@@ -43,18 +58,18 @@ export function DocumentReviewPage() {
           return;
         }
 
-        const currentVersion = await db.versions.get(document.currentVersionId);
-        if (!currentVersion) {
+        const versionToLoad = await db.versions.get(selectedVersionId);
+        if (!versionToLoad) {
           setError('Document version not found');
           setLoading(false);
           return;
         }
 
-        setVersion(currentVersion);
+        setVersion(versionToLoad);
         setLoading(false);
 
         // Load comments for this document/version
-        await loadComments(id, currentVersion.id);
+        await loadComments(id, versionToLoad.id);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to load document');
         setLoading(false);
@@ -62,7 +77,7 @@ export function DocumentReviewPage() {
     };
 
     loadDocumentVersion();
-  }, [id, getDocument, loadComments]);
+  }, [id, selectedVersionId, getDocument, loadComments]);
 
   const document = id ? getDocument(id) : null;
 
@@ -140,6 +155,11 @@ export function DocumentReviewPage() {
 
   const handleCancelLocationComment = () => {
     setPendingAnnotation(null);
+  };
+
+  const handleVersionSelect = (versionId: string) => {
+    setSelectedVersionId(versionId);
+    setLoading(true);
   };
 
   const handleWorkflowAction = async (action: WorkflowAction, toStatus: DocumentStatus, comment?: string) => {
@@ -225,9 +245,14 @@ export function DocumentReviewPage() {
             <h2>Versions</h2>
           </div>
           <div className="document-review-page__sidebar-content">
-            <p className="document-review-page__placeholder">
-              Version history will be implemented in E6-S1
-            </p>
+            {selectedVersionId && (
+              <VersionHistory
+                documentId={document.id}
+                currentVersionId={document.currentVersionId}
+                selectedVersionId={selectedVersionId}
+                onVersionSelect={handleVersionSelect}
+              />
+            )}
           </div>
         </aside>
 
