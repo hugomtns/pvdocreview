@@ -22,6 +22,24 @@
   border-width: 0;
 }
 
+/* Primary Button Styling - Override shadcn/ui defaults */
+button[data-variant="default"],
+button:not([data-variant]):not([class*="outline"]):not([class*="ghost"]):not([class*="link"]):not([class*="secondary"]) {
+  background-color: var(--color-primary) !important;
+  color: var(--color-text-inverse) !important;
+  border: none !important;
+}
+
+button[data-variant="default"]:hover,
+button:not([data-variant]):not([class*="outline"]):not([class*="ghost"]):not([class*="link"]):not([class*="secondary"]):hover:not(:disabled) {
+  background-color: var(--color-primary-hover) !important;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 /* Focus Styles */
 :focus-visible {
   outline: 2px solid var(--color-primary);

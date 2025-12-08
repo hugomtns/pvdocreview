@@ -9,7 +9,7 @@ const buttonVariants = cva(
   {
     variants: {
       variant: {
-        default: "bg-primary text-primary-foreground hover:bg-primary/90",
+        default: "",
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
@@ -41,6 +41,7 @@ function Button({
   variant,
   size,
   asChild = false,
+  style,
   ...props
 }: React.ComponentProps<"button"> &
   VariantProps<typeof buttonVariants> & {
@@ -48,10 +49,19 @@ function Button({
   }) {
   const Comp = asChild ? Slot : "button"
 
+  // Apply primary button styles directly
+  const primaryStyle = variant === "default" || !variant ? {
+    backgroundColor: '#0d6efd',
+    color: '#ffffff',
+    border: 'none',
+    ...style
+  } : style;
+
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
+      style={primaryStyle}
       {...props}
     />
   )

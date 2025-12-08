@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { RoleGate } from '@/components/RoleGate/RoleGate';
+import { DocumentUploadDialog } from '@/components/DocumentUpload/DocumentUploadDialog';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useAuthStore } from '@/stores/authStore';
 import './DocumentListPage.css';
@@ -40,7 +41,9 @@ export function DocumentListPage() {
               Create Test Document
             </Button>
             <RoleGate allowedRoles={['admin']}>
-              <Button>Upload Document (Admin Only)</Button>
+              <DocumentUploadDialog>
+                <Button>Upload Document</Button>
+              </DocumentUploadDialog>
             </RoleGate>
           </div>
         </div>
@@ -76,9 +79,9 @@ export function DocumentListPage() {
         <div className="document-list-page__demo">
           <Card>
             <CardHeader>
-              <CardTitle>E2-S2: Document Store Demo</CardTitle>
+              <CardTitle>E2-S4: Document Upload Demo</CardTitle>
               <CardDescription>
-                Testing document store with Dexie persistence. Click "Create Test Document" to add documents.
+                Upload real files (PDF, images, .docx). Admin-only feature with automatic .docx to PDF conversion.
               </CardDescription>
             </CardHeader>
             <CardContent className="document-list-page__demo-content">

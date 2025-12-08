@@ -20,6 +20,10 @@
   gap: var(--spacing-sm);
 }
 
+.document-list-page__actions button {
+  min-width: 120px;
+}
+
 .document-list-page__error {
   padding: var(--spacing-md);
   background-color: var(--color-error-light);
