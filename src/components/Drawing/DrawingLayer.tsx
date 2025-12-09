@@ -161,7 +161,7 @@ export function DrawingLayer({
       };
 
       const shapeProps = {
-        style: { cursor: 'pointer' },
+        className: 'drawing-layer__shape',
         onClick: handleShapeClick,
         stroke: isSelected ? '#FF6600' : color,
         strokeWidth: isSelected ? strokeWidth + 2 : strokeWidth,

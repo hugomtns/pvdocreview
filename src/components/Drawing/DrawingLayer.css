@@ -27,3 +27,13 @@
   pointer-events: none;
   transition: none;
 }
+
+.drawing-layer__shape {
+  pointer-events: all;
+  cursor: pointer;
+  transition: stroke 150ms ease, stroke-width 150ms ease;
+}
+
+.drawing-layer__shape:hover {
+  opacity: 0.8;
+}
