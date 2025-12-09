@@ -46,6 +46,28 @@ button:disabled {
   outline-offset: 2px;
 }
 
+/* Typography Hierarchy - Linear-style refinement */
+h1, .text-3xl {
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  line-height: var(--line-height-tight);
+}
+
+h2, .text-2xl {
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.015em;
+  line-height: var(--line-height-tight);
+}
+
+h3, .text-xl {
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+}
+
+h4, h5, h6 {
+  font-weight: var(--font-weight-medium);
+}
+
 /* Padding Utilities */
 .p-xs { padding: var(--spacing-xs); }
 .p-sm { padding: var(--spacing-sm); }
