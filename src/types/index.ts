@@ -51,12 +51,31 @@ export interface LocationAnchor {
   color?: string;               // Highlight color (default: #FFFF0080 - semi-transparent yellow)
 }
 
+// Drawing Shapes
+export type ShapeType = 'circle' | 'rectangle';
+
+export interface DrawingShape {
+  id: string;
+  type: ShapeType;
+  page: number;
+  color: string;                // Hex color code (e.g., '#FF0000')
+  strokeWidth: number;          // 1-5px
+  fill?: string;                // Optional fill color (semi-transparent)
+  bounds: {
+    x1: number;                 // Percentage (0-100) from left
+    y1: number;                 // Percentage (0-100) from top
+    x2: number;                 // Percentage (0-100) from left
+    y2: number;                 // Percentage (0-100) from top
+  };
+}
+
 export interface Comment {
   id: string;
   documentId: string;
   versionId: string;
   type: CommentType;
   anchor?: LocationAnchor;      // Only for location comments
+  drawing?: DrawingShape;       // Optional drawing attached to comment
   content: string;
   authorId: string;
   authorName: string;
