@@ -118,7 +118,7 @@ export function DocumentReviewPage() {
     }
   };
 
-  const handleAddDocumentComment = async (content: string) => {
+  const handleAddDocumentComment = async (content: string, isPrivate: boolean) => {
     if (!currentUser || !document || !version) return;
 
     try {
@@ -131,6 +131,7 @@ export function DocumentReviewPage() {
         authorName: currentUser.name,
         authorRole: currentUser.role,
         resolved: false,
+        isPrivate,
       });
     } catch (err) {
       console.error('Failed to add document comment:', err);
@@ -144,7 +145,7 @@ export function DocumentReviewPage() {
     setPendingAnnotation({ pageNumber, anchor });
   };
 
-  const handleSubmitLocationComment = async (content: string) => {
+  const handleSubmitLocationComment = async (content: string, isPrivate: boolean) => {
     if (!currentUser || !document || !version || !pendingAnnotation) return;
 
     try {
@@ -158,6 +159,7 @@ export function DocumentReviewPage() {
         authorName: currentUser.name,
         authorRole: currentUser.role,
         resolved: false,
+        isPrivate,
       });
 
       // Set the new comment as active to highlight its pin

@@ -60,6 +60,7 @@ export interface Comment {
   createdAt: Date;
   updatedAt: Date;
   resolved: boolean;
+  isPrivate: boolean;           // Default: false (public)
 }
 
 // Workflow Actions

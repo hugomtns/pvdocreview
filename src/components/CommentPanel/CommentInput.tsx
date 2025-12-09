@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Lock } from 'lucide-react';
 import './CommentInput.css';
 
 interface CommentInputProps {
-  onSubmit: (content: string) => void;
+  onSubmit: (content: string, isPrivate: boolean) => void;
   onCancel: () => void;
   placeholder?: string;
   disabled?: boolean;
@@ -16,12 +17,14 @@ export function CommentInput({
   disabled = false,
 }: CommentInputProps) {
   const [content, setContent] = useState('');
+  const [isPrivate, setIsPrivate] = useState(false);
 
   const handleSubmit = () => {
     const trimmedContent = content.trim();
     if (trimmedContent) {
-      onSubmit(trimmedContent);
+      onSubmit(trimmedContent, isPrivate);
       setContent('');
+      setIsPrivate(false);
     }
   };
 
@@ -50,6 +53,19 @@ export function CommentInput({
         rows={3}
         autoFocus
       />
+      <div className="comment-input__privacy">
+        <label className="comment-input__privacy-label">
+          <input
+            type="checkbox"
+            checked={isPrivate}
+            onChange={(e) => setIsPrivate(e.target.checked)}
+            disabled={disabled}
+            className="comment-input__privacy-checkbox"
+          />
+          <Lock size={14} />
+          <span>Private comment (only visible to you and admins)</span>
+        </label>
+      </div>
       <div className="comment-input__actions">
         <span className="comment-input__hint">
           Press Ctrl+Enter to submit, Esc to cancel

@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { CommentThread } from './CommentThread';
 import { CommentInput } from './CommentInput';
+import { useAuthStore } from '@/stores/authStore';
 import type { Comment } from '@/types';
 import './CommentPanel.css';
 
@@ -10,7 +11,7 @@ interface CommentPanelProps {
   onResolve?: (commentId: string) => void;
   onUnresolve?: (commentId: string) => void;
   onPinClick?: (commentId: string) => void;
-  onAddDocumentComment?: (content: string) => void;
+  onAddDocumentComment?: (content: string, isPrivate: boolean) => void;
   activeCommentId?: string | null;
   canResolve?: boolean;
   canComment?: boolean;
@@ -35,6 +36,7 @@ export function CommentPanel({
   const [showResolved, setShowResolved] = useState(true);
   const [isAddingComment, setIsAddingComment] = useState(false);
   const commentRefs = useRef<{ [key: string]: HTMLDivElement | null }>({});
+  const currentUser = useAuthStore(state => state.currentUser);
 
   // Scroll to active comment
   useEffect(() => {
@@ -46,9 +48,16 @@ export function CommentPanel({
     }
   }, [activeCommentId]);
 
-  // Separate location and document comments
-  const locationComments = comments.filter(c => c.type === 'location');
-  const documentComments = comments.filter(c => c.type === 'document');
+  // Filter private comments: only show to author and admins
+  const canViewComment = (comment: Comment): boolean => {
+    if (!comment.isPrivate) return true;
+    if (!currentUser) return false;
+    return currentUser.id === comment.authorId || currentUser.role === 'admin';
+  };
+
+  // Separate location and document comments, filtering private ones
+  const locationComments = comments.filter(c => c.type === 'location' && canViewComment(c));
+  const documentComments = comments.filter(c => c.type === 'document' && canViewComment(c));
 
   // Filter by resolved status
   const filterComments = (commentList: Comment[]) => {
@@ -68,12 +77,12 @@ export function CommentPanel({
     );
   }
 
-  const totalComments = comments.length;
-  const unresolvedCount = comments.filter(c => !c.resolved).length;
+  const totalComments = comments.filter(canViewComment).length;
+  const unresolvedCount = comments.filter(c => !c.resolved && canViewComment(c)).length;
 
-  const handleAddComment = (content: string) => {
+  const handleAddComment = (content: string, isPrivate: boolean) => {
     if (onAddDocumentComment) {
-      onAddDocumentComment(content);
+      onAddDocumentComment(content, isPrivate);
       setIsAddingComment(false);
     }
   };

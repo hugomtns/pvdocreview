@@ -82,6 +82,19 @@
   border-color: var(--color-warning);
 }
 
+.comment-thread__private-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-neutral-light);
+  color: var(--color-neutral-dark);
+  border: 1px solid var(--color-border);
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
 .comment-thread__pin-link {
   font-size: var(--font-size-xs);
   color: var(--color-primary);

@@ -1,3 +1,4 @@
+import { Lock } from 'lucide-react';
 import type { Comment } from '@/types';
 import './CommentThread.css';
 
@@ -49,6 +50,12 @@ export function CommentThread({
           {versionNumber !== undefined && (
             <span className={`comment-thread__version-badge ${!isCurrentVersion ? 'comment-thread__version-badge--old' : ''}`}>
               v{versionNumber}
+            </span>
+          )}
+          {comment.isPrivate && (
+            <span className="comment-thread__private-badge">
+              <Lock size={12} />
+              Private
             </span>
           )}
         </div>
