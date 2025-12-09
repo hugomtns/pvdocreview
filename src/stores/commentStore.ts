@@ -35,8 +35,8 @@ export const useCommentStore = create<CommentState>((set, get) => ({
         .equals(documentId)
         .toArray();
 
-      // Sort by creation date (oldest first)
-      comments.sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
+      // Sort by creation date (most recent first)
+      comments.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
 
       set({ comments, loading: false });
     } catch (err) {
