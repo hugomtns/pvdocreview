@@ -171,6 +171,7 @@ export function DrawingLayer({
           stroke={color}
           strokeWidth={strokeWidth}
           strokeDasharray="5,5"
+          vectorEffect="non-scaling-stroke"
           className="drawing-layer__preview"
         />
       );
@@ -191,6 +192,7 @@ export function DrawingLayer({
           stroke={color}
           strokeWidth={strokeWidth}
           strokeDasharray="5,5"
+          vectorEffect="non-scaling-stroke"
           className="drawing-layer__preview"
         />
       );
@@ -203,6 +205,7 @@ export function DrawingLayer({
           strokeWidth={strokeWidth}
           strokeLinecap="round"
           strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
           className="drawing-layer__preview"
         />
       );
@@ -233,6 +236,7 @@ export function DrawingLayer({
         stroke: isSelected ? '#FF6600' : color,
         strokeWidth: isSelected ? strokeWidth + 2 : strokeWidth,
         fill: 'none',
+        vectorEffect: 'non-scaling-stroke' as const,
       };
 
       if (type === 'rectangle') {
