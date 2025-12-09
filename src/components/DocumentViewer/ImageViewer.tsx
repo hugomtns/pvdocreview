@@ -90,6 +90,40 @@ export function ImageViewer({
     onLoadError?.(err);
   };
 
+  // Scroll to center the active pin when clicked
+  useEffect(() => {
+    if (!activeCommentId || !containerRef.current || !imgRef.current) return;
+
+    // Find the comment with the active ID
+    const activeComment = comments.find(c => c.id === activeCommentId);
+    if (!activeComment || activeComment.type !== 'location' || !activeComment.anchor) return;
+
+    // Get the pin position as percentage of image dimensions
+    const { x, y } = activeComment.anchor;
+
+    // Calculate absolute position on the image
+    const imgWidth = imgRef.current.width;
+    const imgHeight = imgRef.current.height;
+    const pinX = (x / 100) * imgWidth;
+    const pinY = (y / 100) * imgHeight;
+
+    // Get container dimensions
+    const container = containerRef.current;
+    const containerWidth = container.clientWidth;
+    const containerHeight = container.clientHeight;
+
+    // Calculate scroll position to center the pin
+    const scrollLeft = pinX - containerWidth / 2;
+    const scrollTop = pinY - containerHeight / 2;
+
+    // Scroll smoothly to the pin
+    container.scrollTo({
+      left: Math.max(0, scrollLeft),
+      top: Math.max(0, scrollTop),
+      behavior: 'smooth',
+    });
+  }, [activeCommentId, comments]);
+
   const getImageWidth = () => {
     if (!naturalDimensions) return imageWidth;
 

@@ -107,6 +107,28 @@ export function DocumentViewer({
     return () => container.removeEventListener('scroll', handleScroll);
   }, [numPages]);
 
+  // Scroll to page when active comment changes
+  useEffect(() => {
+    if (!activeCommentId || !containerRef.current) return;
+
+    // Find the comment with the active ID
+    const activeComment = comments.find(c => c.id === activeCommentId);
+    if (!activeComment || activeComment.type !== 'location' || !activeComment.anchor) return;
+
+    // Get the page number (1-indexed)
+    const pageNumber = activeComment.anchor.page;
+    const pageIndex = pageNumber - 1;
+
+    // Scroll to the page
+    const pageElement = pageRefs.current[pageIndex];
+    if (pageElement) {
+      pageElement.scrollIntoView({
+        behavior: 'smooth',
+        block: 'center',
+      });
+    }
+  }, [activeCommentId, comments]);
+
   const getPageWidth = () => {
     if (zoomMode === 'custom') {
       return pageWidth * customScale;
