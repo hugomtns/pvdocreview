@@ -234,6 +234,56 @@ export function DocumentReviewPage() {
   const canResolve = currentUser?.role === 'reviewer' || currentUser?.role === 'admin';
   const canComment = currentUser?.role === 'reviewer' || currentUser?.role === 'admin';
 
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Ignore if user is typing in an input/textarea
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      // Escape - Exit annotation mode
+      if (e.key === 'Escape' && annotationMode) {
+        setAnnotationMode(false);
+        return;
+      }
+
+      // 'A' - Toggle annotation mode (only if user can comment)
+      if (e.key === 'a' && canComment && version) {
+        setAnnotationMode(prev => !prev);
+        return;
+      }
+
+      // Arrow keys - Navigate versions
+      if ((e.key === 'ArrowLeft' || e.key === 'ArrowRight') && versions.length > 1) {
+        e.preventDefault();
+        const currentIndex = versions.findIndex(v => v.id === selectedVersionId);
+        if (currentIndex === -1) return;
+
+        if (e.key === 'ArrowLeft') {
+          // Previous version (older)
+          const nextIndex = currentIndex + 1;
+          const nextVersion = versions[nextIndex];
+          if (nextVersion) {
+            setSelectedVersionId(nextVersion.id);
+            setLoading(true);
+          }
+        } else {
+          // Next version (newer)
+          const prevIndex = currentIndex - 1;
+          const prevVersion = versions[prevIndex];
+          if (prevVersion) {
+            setSelectedVersionId(prevVersion.id);
+            setLoading(true);
+          }
+        }
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [annotationMode, canComment, version, versions, selectedVersionId]);
+
   if (loading) {
     return (
       <div className="document-review-page">
@@ -318,7 +368,9 @@ export function DocumentReviewPage() {
               <button
                 className={`document-review-page__annotation-toggle ${annotationMode ? 'document-review-page__annotation-toggle--active' : ''}`}
                 onClick={() => setAnnotationMode(!annotationMode)}
-                title={annotationMode ? 'Disable annotation mode' : 'Enable annotation mode'}
+                title={annotationMode ? 'Disable annotation mode (Esc)' : 'Enable annotation mode (A)'}
+                aria-label={annotationMode ? 'Disable annotation mode' : 'Enable annotation mode'}
+                aria-pressed={annotationMode}
               >
                 {annotationMode ? '✓ Annotation Mode' : '+ Annotation Mode'}
               </button>

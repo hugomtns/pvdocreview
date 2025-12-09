@@ -57,6 +57,7 @@ export function CommentThread({
             className="comment-thread__pin-link"
             onClick={handlePinClick}
             title="Jump to pin on page"
+            aria-label={`Jump to comment location on page ${comment.anchor.page}`}
           >
             Page {comment.anchor.page}
           </button>
@@ -78,6 +79,7 @@ export function CommentThread({
               <button
                 className="comment-thread__unresolve-button"
                 onClick={() => onUnresolve(comment.id)}
+                aria-label="Reopen this comment"
               >
                 Reopen
               </button>
@@ -88,6 +90,7 @@ export function CommentThread({
           <button
             className="comment-thread__resolve-button"
             onClick={() => onResolve(comment.id)}
+            aria-label="Mark this comment as resolved"
           >
             Mark as Resolved
           </button>

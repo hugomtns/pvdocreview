@@ -17,6 +17,7 @@ export function VersionBanner({ versionNumber, onViewCurrent }: VersionBannerPro
       <button
         className="version-banner__button"
         onClick={onViewCurrent}
+        aria-label="View current version of document"
       >
         View Current Version
       </button>
