@@ -143,10 +143,9 @@
 
 /* Drawing toolbar elements */
 .document-review-page__toolbar-divider {
-  width: 1px;
-  height: 32px;
-  background-color: var(--color-border);
-  margin: 0 var(--spacing-xs);
+  /* Remove hard divider line - use spacing instead for cleaner Linear-style look */
+  width: 0;
+  margin: 0 var(--spacing-sm);
 }
 
 .document-review-page__toolbar-section {
@@ -171,8 +170,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   font-size: 18px;
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
@@ -200,8 +199,8 @@
 }
 
 .document-review-page__toolbar-color {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border-radius: var(--radius-sm);
   border: 2px solid var(--color-border);
   cursor: pointer;
@@ -219,14 +218,14 @@
 
 .document-review-page__toolbar-color:hover {
   transform: scale(1.1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: var(--shadow-sm);
 }
 
 .document-review-page__toolbar-color--active {
   border-color: var(--color-primary);
   border-width: 3px;
   transform: scale(1.15);
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-md);
 }
 
 /* Placeholder text */
@@ -245,7 +244,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(0, 0, 0, 0.2);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -259,7 +258,7 @@
   padding: var(--spacing-lg);
   max-width: 500px;
   width: 90%;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: var(--shadow-xl);
 }
 
 .document-review-page__modal-title {
