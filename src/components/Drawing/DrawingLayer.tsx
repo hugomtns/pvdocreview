@@ -40,7 +40,11 @@ export function DrawingLayer({
   const getPercentageCoordinates = (e: React.MouseEvent): DrawCoordinates => {
     if (!layerRef.current) return { x: 0, y: 0 };
 
-    const rect = layerRef.current.getBoundingClientRect();
+    // Use the event's current target (the layer itself) for accurate positioning
+    const target = e.currentTarget as HTMLElement;
+    const rect = target.getBoundingClientRect();
+
+    // Calculate relative position within the layer
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
 
