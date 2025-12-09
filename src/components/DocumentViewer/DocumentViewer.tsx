@@ -120,33 +120,41 @@ export function DocumentViewer({
     const pageIndex = pageNumber - 1;
     const { y } = activeComment.anchor; // Percentage
 
-    // Get the page element
-    const pageElement = pageRefs.current[pageIndex];
-    if (!pageElement) return;
+    // Use requestAnimationFrame to ensure layout is complete
+    requestAnimationFrame(() => {
+      const container = containerRef.current;
+      if (!container) return;
 
-    // Get the PDF page container (the actual rendered page)
-    const pageContainer = pageElement.querySelector('.document-viewer__page-container');
-    if (!pageContainer) return;
+      // Get the page element
+      const pageElement = pageRefs.current[pageIndex];
+      if (!pageElement) return;
 
-    // Get dimensions
-    const pageRect = pageContainer.getBoundingClientRect();
-    const containerRect = containerRef.current.getBoundingClientRect();
+      // Get the PDF page container (the actual rendered page)
+      const pageContainer = pageElement.querySelector('.document-viewer__page-container');
+      if (!pageContainer) return;
 
-    // Calculate pin position in pixels relative to the page
-    const pinY = (y / 100) * pageRect.height;
+      // Get the canvas element (actual rendered PDF)
+      const canvas = pageContainer.querySelector('canvas');
+      if (!canvas) return;
 
-    // Calculate absolute position in the scrollable container
-    const pageOffsetTop = pageElement.offsetTop;
-    const pageContainerOffsetTop = (pageContainer as HTMLElement).offsetTop;
-    const absolutePinY = pageOffsetTop + pageContainerOffsetTop + pinY;
+      // Calculate pin position
+      const pageTop = pageElement.offsetTop;
+      const canvasTop = (pageContainer as HTMLElement).offsetTop + (canvas as HTMLElement).offsetTop;
 
-    // Calculate scroll position to center the pin
-    const targetScrollTop = absolutePinY - containerRect.height / 2;
+      // Calculate pin's absolute position
+      const canvasHeight = canvas.height;
+      const pinYPixels = (y / 100) * canvasHeight;
+      const absolutePinY = pageTop + canvasTop + pinYPixels;
 
-    // Scroll to the pin location
-    containerRef.current.scrollTo({
-      top: Math.max(0, targetScrollTop),
-      behavior: 'smooth',
+      // Calculate scroll position to center the pin
+      const containerHeight = container.clientHeight;
+      const targetScrollTop = absolutePinY - containerHeight / 2;
+
+      // Scroll to the pin location
+      container.scrollTo({
+        top: Math.max(0, targetScrollTop),
+        behavior: 'smooth',
+      });
     });
   }, [activeCommentId, comments]);
 
