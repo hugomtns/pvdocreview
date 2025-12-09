@@ -208,7 +208,7 @@ export function DocumentReviewPage() {
   // Keyboard handler for Delete key
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Delete' && selectedShapeId && drawingMode) {
+      if (e.key === 'Delete' && selectedShapeId) {
         e.preventDefault();
         handleDeleteShape();
       }
@@ -216,7 +216,7 @@ export function DocumentReviewPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedShapeId, drawingMode]);
+  }, [selectedShapeId]);
 
   const handleVersionSelect = (versionId: string) => {
     setSelectedVersionId(versionId);
@@ -499,20 +499,20 @@ export function DocumentReviewPage() {
                       ))}
                     </div>
                   </div>
+                </>
+              )}
 
-                  {/* Delete Button (shown when shape is selected) */}
-                  {selectedShapeId && (
-                    <>
-                      <div className="document-review-page__toolbar-divider" />
-                      <button
-                        className="document-review-page__annotation-toggle document-review-page__annotation-toggle--destructive"
-                        onClick={handleDeleteShape}
-                        title="Delete selected shape (Delete key)"
-                      >
-                        🗑️ Delete Shape
-                      </button>
-                    </>
-                  )}
+              {/* Delete Button (shown when shape is selected, even outside drawing mode) */}
+              {selectedShapeId && (
+                <>
+                  <div className="document-review-page__toolbar-divider" />
+                  <button
+                    className="document-review-page__annotation-toggle document-review-page__annotation-toggle--destructive"
+                    onClick={handleDeleteShape}
+                    title="Delete selected shape (Delete key)"
+                  >
+                    🗑️ Delete Shape
+                  </button>
                 </>
               )}
             </div>

@@ -223,7 +223,7 @@ export function ImageViewer({
                   activeCommentId={activeCommentId}
                 />
               )}
-              {drawingEnabled && onShapeComplete && (
+              {(shapes.length > 0 || drawingEnabled) && onShapeComplete && (
                 <DrawingLayer
                   pageNumber={1}
                   enabled={drawingEnabled}
