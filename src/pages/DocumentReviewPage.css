@@ -37,27 +37,25 @@
   overflow: hidden;
 }
 
-/* Sidebars */
+/* Sidebars - Borderless for Linear-style clean layout */
 .document-review-page__sidebar {
   display: flex;
   flex-direction: column;
   background-color: var(--color-background);
-  border-right: 1px solid var(--color-border);
   overflow: hidden;
 }
 
 .document-review-page__sidebar--left {
-  border-right: 1px solid var(--color-border);
+  /* Removed hard border - using whitespace instead */
 }
 
 .document-review-page__sidebar--right {
-  border-left: 1px solid var(--color-border);
-  border-right: none;
+  /* Removed hard border - using whitespace instead */
 }
 
 .document-review-page__sidebar-header {
   padding: 14px var(--spacing-lg);
-  border-bottom: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border-light);
   background-color: var(--color-surface);
   display: flex;
   align-items: center;

@@ -3,8 +3,12 @@
   --color-background: #ffffff;
   --color-surface: #f8f9fa;
   --color-surface-hover: #e9ecef;
-  --color-border: #dee2e6;
-  --color-border-strong: #adb5bd;
+
+  /* Borders - Subtle variants for Linear-style softness */
+  --color-border-subtle: rgba(0, 0, 0, 0.04);
+  --color-border-light: rgba(0, 0, 0, 0.06);
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.12);
 
   --color-text-primary: #212529;
   --color-text-secondary: #6c757d;
