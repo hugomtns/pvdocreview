@@ -51,7 +51,7 @@ export function ImageViewer({
   drawingEnabled = false,
   drawingShape = 'rectangle',
   drawingColor = '#FF0000',
-  drawingStrokeWidth = 2,
+  drawingStrokeWidth = 4,
   shapes = [],
   selectedShapeId,
   onShapeComplete,

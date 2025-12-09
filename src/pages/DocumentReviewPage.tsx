@@ -38,7 +38,7 @@ export function DocumentReviewPage() {
   const [drawingMode, setDrawingMode] = useState(false);
   const [selectedShape, setSelectedShape] = useState<ShapeType>('rectangle');
   const [selectedColor, setSelectedColor] = useState('#FF0000');
-  const [strokeWidth, setStrokeWidth] = useState(2);
+  const [strokeWidth, setStrokeWidth] = useState(4);
   const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
 
   // Initialize selected version to current version
@@ -487,14 +487,14 @@ export function DocumentReviewPage() {
                   <div className="document-review-page__toolbar-section">
                     <span className="document-review-page__toolbar-label">Width:</span>
                     <div className="document-review-page__toolbar-button-group">
-                      {[1, 2, 3].map(width => (
+                      {[2, 4, 7].map(width => (
                         <button
                           key={width}
                           className={`document-review-page__toolbar-button ${strokeWidth === width ? 'document-review-page__toolbar-button--active' : ''}`}
                           onClick={() => setStrokeWidth(width)}
                           title={`${width}px`}
                         >
-                          <div className="document-review-page__width-indicator" style={{ height: `${width * 2}px` }} />
+                          <div className="document-review-page__width-indicator" style={{ height: `${width * 1.5}px` }} />
                         </button>
                       ))}
                     </div>
