@@ -40,11 +40,18 @@ export function DrawingLayer({
   const getPercentageCoordinates = (e: React.MouseEvent): DrawCoordinates => {
     if (!layerRef.current) return { x: 0, y: 0 };
 
-    // Use the event's current target (the layer itself) for accurate positioning
-    const target = e.currentTarget as HTMLElement;
-    const rect = target.getBoundingClientRect();
+    // Find the actual image or canvas element (sibling to the drawing layer)
+    const parent = layerRef.current.parentElement;
+    if (!parent) return { x: 0, y: 0 };
 
-    // Calculate relative position within the layer
+    // Look for img (ImageViewer) or canvas (DocumentViewer)
+    const targetElement = parent.querySelector('img') || parent.querySelector('canvas');
+    if (!targetElement) return { x: 0, y: 0 };
+
+    // Use the actual rendered element's bounding rectangle
+    const rect = targetElement.getBoundingClientRect();
+
+    // Calculate relative position within the actual image/canvas
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
 
