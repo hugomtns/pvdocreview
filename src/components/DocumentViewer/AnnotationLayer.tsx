@@ -94,11 +94,24 @@ export function AnnotationLayer({
 
     if (distance < MIN_DRAG_DISTANCE) {
       console.log('✅ CLICK detected - creating point comment at:', dragStart);
-      onAddAnnotation(pageNumber, { page: pageNumber, x: dragStart.x, y: dragStart.y });
+      // Single click - create point comment
+      onAddAnnotation(pageNumber, {
+        page: pageNumber,
+        x: dragStart.x,
+        y: dragStart.y
+      });
     } else {
-      console.log('✅ DRAG detected - would create highlight from:', dragStart, 'to:', dragEnd);
-      // For now, just create a point comment - we'll wire up highlights in Step 4
-      onAddAnnotation(pageNumber, { page: pageNumber, x: dragStart.x, y: dragStart.y });
+      console.log('✅ DRAG detected - creating highlight from:', dragStart, 'to:', dragEnd);
+      // Drag - create highlight comment
+      onAddAnnotation(pageNumber, {
+        page: pageNumber,
+        x: Math.min(dragStart.x, dragEnd.x),
+        y: Math.min(dragStart.y, dragEnd.y),
+        x2: Math.max(dragStart.x, dragEnd.x),
+        y2: Math.max(dragStart.y, dragEnd.y),
+        isHighlight: true,
+        color: '#FFFF0080' // Semi-transparent yellow
+      });
     }
 
     setDragStart(null);
