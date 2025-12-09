@@ -442,7 +442,7 @@ export function DocumentReviewPage() {
                   <div className="document-review-page__toolbar-section">
                     <span className="document-review-page__toolbar-label">Width:</span>
                     <div className="document-review-page__toolbar-button-group">
-                      {[1, 2, 3, 4, 5].map(width => (
+                      {[1, 2, 3].map(width => (
                         <button
                           key={width}
                           className={`document-review-page__toolbar-button ${strokeWidth === width ? 'document-review-page__toolbar-button--active' : ''}`}

@@ -198,6 +198,7 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   padding: 0;
+  background-color: transparent !important; /* Will be overridden by inline style */
 }
 
 .document-review-page__toolbar-color:hover {
