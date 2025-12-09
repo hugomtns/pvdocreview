@@ -29,10 +29,10 @@ export const useCommentStore = create<CommentState>((set, get) => ({
     set({ loading: true, error: null, currentDocumentId: documentId, currentVersionId: versionId });
 
     try {
+      // Load ALL comments for this document, across all versions
       const comments = await db.comments
         .where('documentId')
         .equals(documentId)
-        .and(comment => comment.versionId === versionId)
         .toArray();
 
       // Sort by creation date (oldest first)
