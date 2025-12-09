@@ -9,6 +9,7 @@ import { CommentInput } from '@/components/CommentPanel/CommentInput';
 import { WorkflowActions } from '@/components/WorkflowActions/WorkflowActions';
 import { WorkflowHistory } from '@/components/WorkflowHistory/WorkflowHistory';
 import { VersionHistory } from '@/components/VersionHistory/VersionHistory';
+import { VersionUploadDialog } from '@/components/VersionUpload/VersionUploadDialog';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
@@ -17,7 +18,7 @@ import './DocumentReviewPage.css';
 
 export function DocumentReviewPage() {
   const { id } = useParams<{ id: string }>();
-  const { getDocument, updateDocumentStatus, recordWorkflowEvent } = useDocumentStore();
+  const { getDocument, updateDocumentStatus, recordWorkflowEvent, loadDocuments } = useDocumentStore();
   const { comments, loading: commentsLoading, loadComments, resolveComment, unresolveComment, addComment } = useCommentStore();
   const currentUser = useAuthStore(state => state.currentUser);
   const [version, setVersion] = useState<DocumentVersion | null>(null);
@@ -28,6 +29,7 @@ export function DocumentReviewPage() {
   const [annotationMode, setAnnotationMode] = useState(false);
   const [pendingAnnotation, setPendingAnnotation] = useState<{ pageNumber: number; anchor: LocationAnchor } | null>(null);
   const [workflowHistoryKey, setWorkflowHistoryKey] = useState(0);
+  const [versionHistoryKey, setVersionHistoryKey] = useState(0);
 
   // Initialize selected version to current version
   useEffect(() => {
@@ -162,6 +164,24 @@ export function DocumentReviewPage() {
     setLoading(true);
   };
 
+  const handleVersionUploaded = async () => {
+    // Reload documents from database to get updated current version
+    if (!id) return;
+
+    try {
+      await loadDocuments();
+
+      const document = getDocument(id);
+      if (document) {
+        setSelectedVersionId(document.currentVersionId);
+        setWorkflowHistoryKey(prev => prev + 1);
+        setVersionHistoryKey(prev => prev + 1);
+      }
+    } catch (err) {
+      console.error('Failed to reload after version upload:', err);
+    }
+  };
+
   const handleWorkflowAction = async (action: WorkflowAction, toStatus: DocumentStatus, comment?: string) => {
     if (!currentUser || !document) return;
 
@@ -229,6 +249,13 @@ export function DocumentReviewPage() {
               onStatusChange={handleWorkflowAction}
             />
           )}
+          {currentUser?.role === 'admin' && (
+            <VersionUploadDialog
+              documentId={document.id}
+              documentName={document.name}
+              onVersionUploaded={handleVersionUploaded}
+            />
+          )}
         </div>
       </div>
 
@@ -247,6 +274,7 @@ export function DocumentReviewPage() {
           <div className="document-review-page__sidebar-content">
             {selectedVersionId && (
               <VersionHistory
+                key={versionHistoryKey}
                 documentId={document.id}
                 currentVersionId={document.currentVersionId}
                 selectedVersionId={selectedVersionId}
