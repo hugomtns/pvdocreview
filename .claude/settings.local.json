@@ -18,7 +18,9 @@
       "Bash(find:*)",
       "Bash(git checkout:*)",
       "Bash(git merge:*)",
-      "Bash(git stash:*)"
+      "Bash(git stash:*)",
+      "Bash(git branch:*)",
+      "WebFetch(domain:ui.shadcn.com)"
     ],
     "deny": [],
     "ask": []
