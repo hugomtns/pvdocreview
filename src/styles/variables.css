@@ -27,6 +27,18 @@
   --color-status-approved: #198754;
   --color-status-rejected: #dc3545;
 
+  /* Status Badge Colors - Soft backgrounds + dark text (Linear style) */
+  --color-status-draft-bg: #f1f3f5;
+  --color-status-draft-text: #495057;
+  --color-status-in-review-bg: #e7f1ff;
+  --color-status-in-review-text: #0b5ed7;
+  --color-status-changes-requested-bg: #fff3e0;
+  --color-status-changes-requested-text: #c77700;
+  --color-status-approved-bg: #d1f4e0;
+  --color-status-approved-text: #146c43;
+  --color-status-rejected-bg: #ffe5e8;
+  --color-status-rejected-text: #c41e3a;
+
   /* Colors - Semantic */
   --color-success: #198754;
   --color-success-light: #d1e7dd;
@@ -48,6 +60,14 @@
   --color-role-viewer: #6c757d;
   --color-role-reviewer: #0d6efd;
   --color-role-admin: #6610f2;
+
+  /* Role Badge Colors - Soft backgrounds + dark text (Linear style) */
+  --color-role-viewer-bg: #f1f3f5;
+  --color-role-viewer-text: #495057;
+  --color-role-reviewer-bg: #e7f1ff;
+  --color-role-reviewer-text: #0b5ed7;
+  --color-role-admin-bg: #f3e8ff;
+  --color-role-admin-text: #5a1fa0;
 
   /* Spacing Scale */
   --spacing-xs: 0.25rem;   /* 4px */

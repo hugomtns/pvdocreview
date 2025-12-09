@@ -49,26 +49,25 @@
 
 .comment-thread__role-badge {
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.01em;
 }
 
 .comment-thread__role-badge--viewer {
-  background-color: var(--color-neutral-light);
-  color: var(--color-neutral-dark);
+  background-color: var(--color-role-viewer-bg);
+  color: var(--color-role-viewer-text);
 }
 
 .comment-thread__role-badge--reviewer {
-  background-color: var(--color-info-light);
-  color: var(--color-info-dark);
+  background-color: var(--color-role-reviewer-bg);
+  color: var(--color-role-reviewer-text);
 }
 
 .comment-thread__role-badge--admin {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  background-color: var(--color-role-admin-bg);
+  color: var(--color-role-admin-text);
 }
 
 .comment-thread__version-badge {
