@@ -107,7 +107,7 @@ export function DocumentViewer({
     return () => container.removeEventListener('scroll', handleScroll);
   }, [numPages]);
 
-  // Scroll to page when active comment changes
+  // Scroll to pin location when active comment changes
   useEffect(() => {
     if (!activeCommentId || !containerRef.current) return;
 
@@ -115,18 +115,39 @@ export function DocumentViewer({
     const activeComment = comments.find(c => c.id === activeCommentId);
     if (!activeComment || activeComment.type !== 'location' || !activeComment.anchor) return;
 
-    // Get the page number (1-indexed)
+    // Get the page number and anchor position
     const pageNumber = activeComment.anchor.page;
     const pageIndex = pageNumber - 1;
+    const { y } = activeComment.anchor; // Percentage
 
-    // Scroll to the page
+    // Get the page element
     const pageElement = pageRefs.current[pageIndex];
-    if (pageElement) {
-      pageElement.scrollIntoView({
-        behavior: 'smooth',
-        block: 'center',
-      });
-    }
+    if (!pageElement) return;
+
+    // Get the PDF page container (the actual rendered page)
+    const pageContainer = pageElement.querySelector('.document-viewer__page-container');
+    if (!pageContainer) return;
+
+    // Get dimensions
+    const pageRect = pageContainer.getBoundingClientRect();
+    const containerRect = containerRef.current.getBoundingClientRect();
+
+    // Calculate pin position in pixels relative to the page
+    const pinY = (y / 100) * pageRect.height;
+
+    // Calculate absolute position in the scrollable container
+    const pageOffsetTop = pageElement.offsetTop;
+    const pageContainerOffsetTop = (pageContainer as HTMLElement).offsetTop;
+    const absolutePinY = pageOffsetTop + pageContainerOffsetTop + pinY;
+
+    // Calculate scroll position to center the pin
+    const targetScrollTop = absolutePinY - containerRect.height / 2;
+
+    // Scroll to the pin location
+    containerRef.current.scrollTo({
+      top: Math.max(0, targetScrollTop),
+      behavior: 'smooth',
+    });
   }, [activeCommentId, comments]);
 
   const getPageWidth = () => {
