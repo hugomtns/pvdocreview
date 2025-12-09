@@ -34,6 +34,18 @@
   font-size: var(--font-size-sm);
   color: var(--color-text-secondary);
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+}
+
+.document-card__meta-separator {
+  color: var(--color-text-muted);
+}
+
+.document-card__unresolved-count {
+  color: var(--color-warning);
+  font-weight: var(--font-weight-medium);
 }
 
 .document-card__content {

@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatusBadge } from '@/components/StatusBadge/StatusBadge';
-import type { Document } from '@/types';
+import { useAuthStore } from '@/stores/authStore';
+import type { Document, Comment } from '@/types';
 import { db } from '@/lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
 import './DocumentCard.css';
@@ -12,6 +13,7 @@ interface DocumentCardProps {
 
 export function DocumentCard({ document }: DocumentCardProps) {
   const navigate = useNavigate();
+  const currentUser = useAuthStore(state => state.currentUser);
 
   // Count versions for this document
   const versionCount = useLiveQuery(
@@ -20,6 +22,29 @@ export function DocumentCard({ document }: DocumentCardProps) {
       return count;
     },
     [document.id],
+    0
+  );
+
+  // Count unresolved comments visible to the current user
+  const unresolvedCount = useLiveQuery(
+    async () => {
+      const comments = await db.comments
+        .where('documentId')
+        .equals(document.id)
+        .toArray();
+
+      // Filter private comments: only show to author and admins
+      const canViewComment = (comment: Comment): boolean => {
+        if (!comment.isPrivate) return true;
+        if (!currentUser) return false;
+        return currentUser.id === comment.authorId || currentUser.role === 'admin';
+      };
+
+      // Count unresolved comments that the user can see
+      const count = comments.filter(c => !c.resolved && canViewComment(c)).length;
+      return count;
+    },
+    [document.id, currentUser?.id, currentUser?.role],
     0
   );
 
@@ -43,7 +68,15 @@ export function DocumentCard({ document }: DocumentCardProps) {
           <StatusBadge status={document.status} />
         </div>
         <CardDescription className="document-card__meta">
-          {versionCount} {versionCount === 1 ? 'version' : 'versions'}
+          <span>{versionCount} {versionCount === 1 ? 'version' : 'versions'}</span>
+          {unresolvedCount > 0 && (
+            <>
+              <span className="document-card__meta-separator">•</span>
+              <span className="document-card__unresolved-count">
+                {unresolvedCount} unresolved
+              </span>
+            </>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent className="document-card__content">
