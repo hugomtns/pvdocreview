@@ -205,10 +205,20 @@ export function DocumentReviewPage() {
     console.log('Shape deleted:', selectedShapeId);
   };
 
-  // Keyboard handler for Delete key
+  const handleToggleDrawingMode = () => {
+    const newDrawingMode = !drawingMode;
+    setDrawingMode(newDrawingMode);
+
+    // Deselect any selected shape when entering drawing mode
+    if (newDrawingMode && selectedShapeId) {
+      setSelectedShapeId(null);
+    }
+  };
+
+  // Keyboard handler for Delete key (only when drawing mode is OFF)
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Delete' && selectedShapeId) {
+      if (e.key === 'Delete' && selectedShapeId && !drawingMode) {
         e.preventDefault();
         handleDeleteShape();
       }
@@ -216,7 +226,7 @@ export function DocumentReviewPage() {
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [selectedShapeId]);
+  }, [selectedShapeId, drawingMode]);
 
   const handleVersionSelect = (versionId: string) => {
     setSelectedVersionId(versionId);
@@ -421,7 +431,7 @@ export function DocumentReviewPage() {
 
               <button
                 className={`document-review-page__annotation-toggle ${drawingMode ? 'document-review-page__annotation-toggle--active' : ''}`}
-                onClick={() => setDrawingMode(!drawingMode)}
+                onClick={handleToggleDrawingMode}
                 title={drawingMode ? 'Disable drawing mode' : 'Enable drawing mode'}
                 aria-label={drawingMode ? 'Disable drawing mode' : 'Enable drawing mode'}
                 aria-pressed={drawingMode}

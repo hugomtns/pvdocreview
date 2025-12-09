@@ -232,11 +232,12 @@ export function DrawingLayer({
 
       const shapeProps = {
         className: 'drawing-layer__shape',
-        onClick: handleShapeClick,
+        onClick: !enabled ? handleShapeClick : undefined, // Only selectable when drawing mode OFF
         stroke: isSelected ? '#FF6600' : color,
         strokeWidth: isSelected ? strokeWidth + 2 : strokeWidth,
         fill: 'none',
         vectorEffect: 'non-scaling-stroke' as const,
+        style: { cursor: enabled ? 'crosshair' : 'pointer' }, // Different cursor based on mode
       };
 
       if (type === 'rectangle') {
