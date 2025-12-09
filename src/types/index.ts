@@ -43,8 +43,12 @@ export type CommentType = 'location' | 'document';
 
 export interface LocationAnchor {
   page: number;
-  x: number;                    // Percentage (0-100) from left
-  y: number;                    // Percentage (0-100) from top
+  x: number;                    // Percentage (0-100) from left - single point OR top-left of highlight
+  y: number;                    // Percentage (0-100) from top - single point OR top-left of highlight
+  isHighlight?: boolean;        // Flag for highlight vs point (default: false)
+  x2?: number;                  // Bottom-right x (for highlights)
+  y2?: number;                  // Bottom-right y (for highlights)
+  color?: string;               // Highlight color (default: #FFFF0080 - semi-transparent yellow)
 }
 
 export interface Comment {
