@@ -435,12 +435,21 @@ export function DocumentReviewPage() {
                     <span className="document-review-page__toolbar-label">Color:</span>
                     <div className="document-review-page__toolbar-color-grid">
                       {['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#000000', '#FFFFFF'].map(color => (
-                        <button
+                        <div
                           key={color}
+                          role="button"
+                          tabIndex={0}
                           className={`document-review-page__toolbar-color ${selectedColor === color ? 'document-review-page__toolbar-color--active' : ''}`}
                           style={{ backgroundColor: color }}
                           onClick={() => setSelectedColor(color)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setSelectedColor(color);
+                            }
+                          }}
                           title={color}
+                          aria-label={`Select color ${color}`}
                         />
                       ))}
                     </div>
