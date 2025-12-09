@@ -467,6 +467,11 @@ export function DocumentReviewPage() {
                 onPinClick={handlePinClick}
                 activeCommentId={activeCommentId}
                 annotationsEnabled={canComment && annotationMode}
+                drawingEnabled={canComment && drawingMode}
+                drawingShape={selectedShape}
+                drawingColor={selectedColor}
+                drawingStrokeWidth={strokeWidth}
+                onShapeComplete={(shape) => console.log('Shape completed:', shape)}
               />
             ) : (
               <DocumentViewer
@@ -476,6 +481,11 @@ export function DocumentReviewPage() {
                 onPinClick={handlePinClick}
                 activeCommentId={activeCommentId}
                 annotationsEnabled={canComment && annotationMode}
+                drawingEnabled={canComment && drawingMode}
+                drawingShape={selectedShape}
+                drawingColor={selectedColor}
+                drawingStrokeWidth={strokeWidth}
+                onShapeComplete={(shape) => console.log('Shape completed:', shape)}
               />
             )
           )}

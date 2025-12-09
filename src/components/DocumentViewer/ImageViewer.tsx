@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { AnnotationLayer } from './AnnotationLayer';
-import type { Comment, LocationAnchor } from '@/types';
+import { DrawingLayer } from '../Drawing/DrawingLayer';
+import type { Comment, LocationAnchor, ShapeType, DrawingShape } from '@/types';
 import './ImageViewer.css';
 
 type ZoomMode = 'fit-width' | 'fit-page' | 'custom';
@@ -28,6 +29,11 @@ interface ImageViewerProps {
   onPinClick?: (commentId: string) => void;
   activeCommentId?: string | null;
   annotationsEnabled?: boolean;
+  drawingEnabled?: boolean;
+  drawingShape?: ShapeType;
+  drawingColor?: string;
+  drawingStrokeWidth?: number;
+  onShapeComplete?: (shape: DrawingShape) => void;
 }
 
 export function ImageViewer({
@@ -39,6 +45,11 @@ export function ImageViewer({
   onPinClick,
   activeCommentId,
   annotationsEnabled = false,
+  drawingEnabled = false,
+  drawingShape = 'rectangle',
+  drawingColor = '#FF0000',
+  drawingStrokeWidth = 2,
+  onShapeComplete,
 }: ImageViewerProps) {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -204,6 +215,16 @@ export function ImageViewer({
                   onAddAnnotation={onAddAnnotation}
                   onPinClick={onPinClick}
                   activeCommentId={activeCommentId}
+                />
+              )}
+              {drawingEnabled && onShapeComplete && (
+                <DrawingLayer
+                  pageNumber={1}
+                  enabled={drawingEnabled}
+                  shapeType={drawingShape}
+                  color={drawingColor}
+                  strokeWidth={drawingStrokeWidth}
+                  onShapeComplete={onShapeComplete}
                 />
               )}
             </div>

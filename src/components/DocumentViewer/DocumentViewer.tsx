@@ -1,7 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
 import { Document, Page, pdfjs } from 'react-pdf';
 import { AnnotationLayer } from './AnnotationLayer';
-import type { Comment, LocationAnchor } from '@/types';
+import { DrawingLayer } from '../Drawing/DrawingLayer';
+import type { Comment, LocationAnchor, ShapeType, DrawingShape } from '@/types';
 import './DocumentViewer.css';
 
 // Configure PDF.js worker
@@ -32,6 +33,11 @@ interface DocumentViewerProps {
   onPinClick?: (commentId: string) => void;
   activeCommentId?: string | null;
   annotationsEnabled?: boolean;
+  drawingEnabled?: boolean;
+  drawingShape?: ShapeType;
+  drawingColor?: string;
+  drawingStrokeWidth?: number;
+  onShapeComplete?: (shape: DrawingShape) => void;
 }
 
 export function DocumentViewer({
@@ -43,6 +49,11 @@ export function DocumentViewer({
   onPinClick,
   activeCommentId,
   annotationsEnabled = false,
+  drawingEnabled = false,
+  drawingShape = 'rectangle',
+  drawingColor = '#FF0000',
+  drawingStrokeWidth = 2,
+  onShapeComplete,
 }: DocumentViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -244,6 +255,16 @@ export function DocumentViewer({
                     onAddAnnotation={onAddAnnotation}
                     onPinClick={onPinClick}
                     activeCommentId={activeCommentId}
+                  />
+                )}
+                {drawingEnabled && onShapeComplete && (
+                  <DrawingLayer
+                    pageNumber={index + 1}
+                    enabled={drawingEnabled}
+                    shapeType={drawingShape}
+                    color={drawingColor}
+                    strokeWidth={drawingStrokeWidth}
+                    onShapeComplete={onShapeComplete}
                   />
                 )}
               </div>
