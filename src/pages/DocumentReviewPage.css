@@ -198,7 +198,6 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   padding: 0;
-  background: none;
   box-shadow: none;
   outline: none;
 }
