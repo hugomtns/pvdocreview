@@ -1,0 +1,16 @@
+/* Button padding standards using CSS variables */
+button[data-slot="button"] {
+  padding: var(--spacing-sm) var(--spacing-md) !important;
+}
+
+button[data-slot="button"][class*="size-sm"] {
+  padding: var(--spacing-xs) var(--spacing-sm) !important;
+}
+
+button[data-slot="button"][class*="size-lg"] {
+  padding: var(--spacing-md) var(--spacing-lg) !important;
+}
+
+button[data-slot="button"][class*="icon"] {
+  padding: var(--spacing-sm) !important;
+}

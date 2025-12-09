@@ -1,0 +1,12 @@
+/* Card padding standards using CSS variables */
+[data-slot="card-header"],
+[data-slot="card-content"],
+[data-slot="card-footer"] {
+  padding-left: var(--spacing-lg);
+  padding-right: var(--spacing-lg);
+}
+
+[data-slot="card"] {
+  padding-top: var(--spacing-lg);
+  padding-bottom: var(--spacing-lg);
+}

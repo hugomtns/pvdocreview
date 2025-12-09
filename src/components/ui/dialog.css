@@ -1,0 +1,9 @@
+/* Dialog padding standards using CSS variables */
+[data-slot="dialog-content"] {
+  padding: var(--spacing-lg);
+}
+
+[data-slot="dialog-header"],
+[data-slot="dialog-footer"] {
+  padding: 0;
+}

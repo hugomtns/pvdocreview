@@ -56,16 +56,21 @@
 }
 
 .document-review-page__sidebar-header {
-  padding: var(--spacing-md) var(--spacing-lg);
+  padding: 14px var(--spacing-lg);
   border-bottom: 1px solid var(--color-border);
   background-color: var(--color-surface);
+  display: flex;
+  align-items: center;
+  height: 52px;
+  box-sizing: border-box;
 }
 
 .document-review-page__sidebar-header h2 {
-  font-size: var(--font-size-base);
+  font-size: var(--font-size-sm);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
   margin: 0;
+  line-height: 1.5;
 }
 
 .document-review-page__sidebar-content {
@@ -96,6 +101,8 @@
   padding: var(--spacing-sm) var(--spacing-md);
   background-color: var(--color-background);
   border-bottom: 1px solid var(--color-border);
+  height: 52px;
+  box-sizing: border-box;
 }
 
 /* Annotation mode toggle */
@@ -105,7 +112,7 @@
   color: var(--color-text-secondary);
   background-color: var(--color-surface);
   border: 1px solid var(--color-border);
-  padding: 6px var(--spacing-md);
+  padding: var(--spacing-sm) var(--spacing-md);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);

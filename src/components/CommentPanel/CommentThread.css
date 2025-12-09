@@ -45,7 +45,7 @@
 .comment-thread__role-badge {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
-  padding: 2px var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-sm);
   text-transform: uppercase;
   letter-spacing: 0.5px;
@@ -69,7 +69,7 @@
 .comment-thread__version-badge {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
-  padding: 2px var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-sm);
   background-color: var(--color-surface);
   color: var(--color-text-secondary);
@@ -88,7 +88,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 2px var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-sm);
   transition: background-color var(--transition-fast);
   white-space: nowrap;
@@ -124,7 +124,7 @@
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   color: var(--color-success);
-  padding: 2px var(--spacing-xs);
+  padding: var(--spacing-xs) var(--spacing-sm);
   background-color: var(--color-success-light);
   border-radius: var(--radius-sm);
 }
@@ -135,7 +135,7 @@
   color: var(--color-primary);
   background: none;
   border: 1px solid var(--color-primary);
-  padding: 4px var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
@@ -152,7 +152,7 @@
   color: var(--color-text-secondary);
   background: none;
   border: 1px solid var(--color-border);
-  padding: 4px var(--spacing-sm);
+  padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
