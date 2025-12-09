@@ -47,3 +47,20 @@
 .version-banner__button:active {
   transform: translateY(1px);
 }
+
+/* Responsive layout for mobile */
+@media (max-width: 768px) {
+  .version-banner {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .version-banner__button {
+    min-height: 44px;
+    width: 100%;
+  }
+
+  .version-banner__content {
+    margin-bottom: var(--spacing-sm);
+  }
+}

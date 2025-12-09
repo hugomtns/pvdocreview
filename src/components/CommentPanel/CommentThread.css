@@ -163,3 +163,22 @@
   border-color: var(--color-primary);
   color: var(--color-primary);
 }
+
+/* Touch-friendly buttons on mobile */
+@media (max-width: 768px) {
+  .comment-thread__resolve-button,
+  .comment-thread__unresolve-button,
+  .comment-thread__pin-link {
+    min-height: 44px;
+    padding: var(--spacing-sm) var(--spacing-md);
+  }
+
+  .comment-thread {
+    padding: var(--spacing-md);
+  }
+
+  .comment-thread__content {
+    font-size: var(--font-size-base);
+    margin-bottom: var(--spacing-md);
+  }
+}

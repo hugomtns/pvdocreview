@@ -125,3 +125,15 @@
   color: var(--color-text-muted);
   white-space: nowrap;
 }
+
+/* Touch-friendly version buttons on mobile */
+@media (max-width: 768px) {
+  .version-history__item {
+    min-height: 80px;
+    padding: var(--spacing-md);
+  }
+
+  .version-history__version-number {
+    font-size: var(--font-size-lg);
+  }
+}
