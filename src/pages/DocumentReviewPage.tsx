@@ -11,7 +11,6 @@ import { WorkflowHistory } from '@/components/WorkflowHistory/WorkflowHistory';
 import { VersionHistory } from '@/components/VersionHistory/VersionHistory';
 import { VersionUploadDialog } from '@/components/VersionUpload/VersionUploadDialog';
 import { VersionBanner } from '@/components/VersionBanner/VersionBanner';
-import { DrawingToolbar } from '@/components/Drawing/DrawingToolbar';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
@@ -373,29 +372,91 @@ export function DocumentReviewPage() {
             />
           )}
           {canComment && version && (
-            <>
-              <div className="document-review-page__toolbar">
-                <button
-                  className={`document-review-page__annotation-toggle ${annotationMode ? 'document-review-page__annotation-toggle--active' : ''}`}
-                  onClick={() => setAnnotationMode(!annotationMode)}
-                  title={annotationMode ? 'Disable annotation mode (Esc)' : 'Enable annotation mode (A)'}
-                  aria-label={annotationMode ? 'Disable annotation mode' : 'Enable annotation mode'}
-                  aria-pressed={annotationMode}
-                >
-                  {annotationMode ? '✓ Annotation Mode' : '+ Annotation Mode'}
-                </button>
-              </div>
-              <DrawingToolbar
-                isDrawingMode={drawingMode}
-                selectedShape={selectedShape}
-                selectedColor={selectedColor}
-                strokeWidth={strokeWidth}
-                onToggleDrawingMode={() => setDrawingMode(!drawingMode)}
-                onShapeChange={setSelectedShape}
-                onColorChange={setSelectedColor}
-                onStrokeWidthChange={setStrokeWidth}
-              />
-            </>
+            <div className="document-review-page__toolbar">
+              <button
+                className={`document-review-page__annotation-toggle ${annotationMode ? 'document-review-page__annotation-toggle--active' : ''}`}
+                onClick={() => setAnnotationMode(!annotationMode)}
+                title={annotationMode ? 'Disable annotation mode (Esc)' : 'Enable annotation mode (A)'}
+                aria-label={annotationMode ? 'Disable annotation mode' : 'Enable annotation mode'}
+                aria-pressed={annotationMode}
+              >
+                {annotationMode ? '✓ Annotation Mode' : '+ Annotation Mode'}
+              </button>
+
+              <button
+                className={`document-review-page__annotation-toggle ${drawingMode ? 'document-review-page__annotation-toggle--active' : ''}`}
+                onClick={() => setDrawingMode(!drawingMode)}
+                title={drawingMode ? 'Disable drawing mode' : 'Enable drawing mode'}
+                aria-label={drawingMode ? 'Disable drawing mode' : 'Enable drawing mode'}
+                aria-pressed={drawingMode}
+              >
+                {drawingMode ? '✓ Drawing Mode' : '+ Drawing Mode'}
+              </button>
+
+              {drawingMode && (
+                <>
+                  <div className="document-review-page__toolbar-divider" />
+
+                  {/* Shape Selector */}
+                  <div className="document-review-page__toolbar-section">
+                    <span className="document-review-page__toolbar-label">Shape:</span>
+                    <div className="document-review-page__toolbar-button-group">
+                      <button
+                        className={`document-review-page__toolbar-button ${selectedShape === 'rectangle' ? 'document-review-page__toolbar-button--active' : ''}`}
+                        onClick={() => setSelectedShape('rectangle')}
+                        title="Rectangle"
+                      >
+                        ▭
+                      </button>
+                      <button
+                        className={`document-review-page__toolbar-button ${selectedShape === 'circle' ? 'document-review-page__toolbar-button--active' : ''}`}
+                        onClick={() => setSelectedShape('circle')}
+                        title="Circle"
+                      >
+                        ○
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="document-review-page__toolbar-divider" />
+
+                  {/* Color Picker */}
+                  <div className="document-review-page__toolbar-section">
+                    <span className="document-review-page__toolbar-label">Color:</span>
+                    <div className="document-review-page__toolbar-color-grid">
+                      {['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#000000', '#FFFFFF'].map(color => (
+                        <button
+                          key={color}
+                          className={`document-review-page__toolbar-color ${selectedColor === color ? 'document-review-page__toolbar-color--active' : ''}`}
+                          style={{ backgroundColor: color }}
+                          onClick={() => setSelectedColor(color)}
+                          title={color}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="document-review-page__toolbar-divider" />
+
+                  {/* Stroke Width */}
+                  <div className="document-review-page__toolbar-section">
+                    <span className="document-review-page__toolbar-label">Width:</span>
+                    <div className="document-review-page__toolbar-button-group">
+                      {[1, 2, 3, 4, 5].map(width => (
+                        <button
+                          key={width}
+                          className={`document-review-page__toolbar-button ${strokeWidth === width ? 'document-review-page__toolbar-button--active' : ''}`}
+                          onClick={() => setStrokeWidth(width)}
+                          title={`${width}px`}
+                        >
+                          {width}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
           )}
           {version && (
             version.fileType === 'image' ? (
