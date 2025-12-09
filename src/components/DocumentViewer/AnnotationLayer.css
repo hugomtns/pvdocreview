@@ -23,6 +23,20 @@
   overflow: visible;
 }
 
+.annotation-layer__highlight {
+  pointer-events: all;
+  cursor: pointer;
+  transition: all 150ms ease;
+}
+
+.annotation-layer__highlight:hover {
+  filter: brightness(1.1);
+}
+
+.annotation-layer__highlight--active {
+  filter: brightness(1.2);
+}
+
 .annotation-layer__highlight-preview {
   pointer-events: none;
   transition: none;

@@ -131,8 +131,33 @@ export function AnnotationLayer({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
-      {/* SVG layer for highlight preview */}
+      {/* SVG layer for highlights */}
       <svg className="annotation-layer__svg">
+        {/* Render saved highlights */}
+        {pageComments
+          .filter(c => c.anchor?.isHighlight)
+          .map(comment => {
+            if (!comment.anchor || !comment.anchor.x2 || !comment.anchor.y2) return null;
+
+            const isActive = comment.id === activeCommentId;
+
+            return (
+              <rect
+                key={comment.id}
+                x={`${comment.anchor.x}%`}
+                y={`${comment.anchor.y}%`}
+                width={`${comment.anchor.x2 - comment.anchor.x}%`}
+                height={`${comment.anchor.y2 - comment.anchor.y}%`}
+                fill={comment.anchor.color || '#FFFF0080'}
+                stroke={isActive ? '#FF6600' : '#FFD700'}
+                strokeWidth={isActive ? '3' : '2'}
+                className={`annotation-layer__highlight ${isActive ? 'annotation-layer__highlight--active' : ''}`}
+                onClick={() => onPinClick?.(comment.id)}
+                style={{ cursor: 'pointer' }}
+              />
+            );
+          })}
+
         {/* Preview while dragging */}
         {isDragging && dragStart && dragEnd && (
           <rect
