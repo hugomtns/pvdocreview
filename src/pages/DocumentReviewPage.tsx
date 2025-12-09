@@ -11,10 +11,11 @@ import { WorkflowHistory } from '@/components/WorkflowHistory/WorkflowHistory';
 import { VersionHistory } from '@/components/VersionHistory/VersionHistory';
 import { VersionUploadDialog } from '@/components/VersionUpload/VersionUploadDialog';
 import { VersionBanner } from '@/components/VersionBanner/VersionBanner';
+import { DrawingToolbar } from '@/components/Drawing/DrawingToolbar';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
-import type { DocumentVersion, LocationAnchor, WorkflowAction, DocumentStatus } from '@/types';
+import type { DocumentVersion, LocationAnchor, WorkflowAction, DocumentStatus, ShapeType } from '@/types';
 import './DocumentReviewPage.css';
 
 export function DocumentReviewPage() {
@@ -32,6 +33,12 @@ export function DocumentReviewPage() {
   const [pendingAnnotation, setPendingAnnotation] = useState<{ pageNumber: number; anchor: LocationAnchor } | null>(null);
   const [workflowHistoryKey, setWorkflowHistoryKey] = useState(0);
   const [versionHistoryKey, setVersionHistoryKey] = useState(0);
+
+  // Drawing mode state
+  const [drawingMode, setDrawingMode] = useState(false);
+  const [selectedShape, setSelectedShape] = useState<ShapeType>('rectangle');
+  const [selectedColor, setSelectedColor] = useState('#FF0000');
+  const [strokeWidth, setStrokeWidth] = useState(2);
 
   // Initialize selected version to current version
   useEffect(() => {
@@ -366,17 +373,29 @@ export function DocumentReviewPage() {
             />
           )}
           {canComment && version && (
-            <div className="document-review-page__toolbar">
-              <button
-                className={`document-review-page__annotation-toggle ${annotationMode ? 'document-review-page__annotation-toggle--active' : ''}`}
-                onClick={() => setAnnotationMode(!annotationMode)}
-                title={annotationMode ? 'Disable annotation mode (Esc)' : 'Enable annotation mode (A)'}
-                aria-label={annotationMode ? 'Disable annotation mode' : 'Enable annotation mode'}
-                aria-pressed={annotationMode}
-              >
-                {annotationMode ? '✓ Annotation Mode' : '+ Annotation Mode'}
-              </button>
-            </div>
+            <>
+              <div className="document-review-page__toolbar">
+                <button
+                  className={`document-review-page__annotation-toggle ${annotationMode ? 'document-review-page__annotation-toggle--active' : ''}`}
+                  onClick={() => setAnnotationMode(!annotationMode)}
+                  title={annotationMode ? 'Disable annotation mode (Esc)' : 'Enable annotation mode (A)'}
+                  aria-label={annotationMode ? 'Disable annotation mode' : 'Enable annotation mode'}
+                  aria-pressed={annotationMode}
+                >
+                  {annotationMode ? '✓ Annotation Mode' : '+ Annotation Mode'}
+                </button>
+              </div>
+              <DrawingToolbar
+                isDrawingMode={drawingMode}
+                selectedShape={selectedShape}
+                selectedColor={selectedColor}
+                strokeWidth={strokeWidth}
+                onToggleDrawingMode={() => setDrawingMode(!drawingMode)}
+                onShapeChange={setSelectedShape}
+                onColorChange={setSelectedColor}
+                onStrokeWidthChange={setStrokeWidth}
+              />
+            </>
           )}
           {version && (
             version.fileType === 'image' ? (
