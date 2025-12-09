@@ -118,6 +118,24 @@ export function AnnotationLayer({
       onMouseMove={handleMouseMove}
       onMouseUp={handleMouseUp}
     >
+      {/* SVG layer for highlight preview */}
+      <svg className="annotation-layer__svg">
+        {/* Preview while dragging */}
+        {isDragging && dragStart && dragEnd && (
+          <rect
+            x={`${Math.min(dragStart.x, dragEnd.x)}%`}
+            y={`${Math.min(dragStart.y, dragEnd.y)}%`}
+            width={`${Math.abs(dragEnd.x - dragStart.x)}%`}
+            height={`${Math.abs(dragEnd.y - dragStart.y)}%`}
+            fill="#FFFF0040"
+            stroke="#FFD700"
+            strokeWidth="2"
+            strokeDasharray="5,5"
+            className="annotation-layer__highlight-preview"
+          />
+        )}
+      </svg>
+
       {pageComments.map((comment, index) => {
         if (!comment.anchor) return null;
 
