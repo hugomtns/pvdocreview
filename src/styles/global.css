@@ -40,10 +40,19 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Focus Styles */
-:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+/* Focus Styles - Linear-style subtle focus ring */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
 }
 
 /* Typography Hierarchy - Linear-style refinement */
