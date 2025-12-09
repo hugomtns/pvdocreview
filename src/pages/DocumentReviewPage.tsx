@@ -14,7 +14,7 @@ import { VersionBanner } from '@/components/VersionBanner/VersionBanner';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
-import type { DocumentVersion, LocationAnchor, WorkflowAction, DocumentStatus } from '@/types';
+import type { DocumentVersion, LocationAnchor, WorkflowAction, DocumentStatus, ShapeType, DrawingShape } from '@/types';
 import './DocumentReviewPage.css';
 
 export function DocumentReviewPage() {
@@ -30,8 +30,16 @@ export function DocumentReviewPage() {
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [annotationMode, setAnnotationMode] = useState(false);
   const [pendingAnnotation, setPendingAnnotation] = useState<{ pageNumber: number; anchor: LocationAnchor } | null>(null);
+  const [shapes, setShapes] = useState<DrawingShape[]>([]); // Will be rendered in viewers (Step 5)
   const [workflowHistoryKey, setWorkflowHistoryKey] = useState(0);
   const [versionHistoryKey, setVersionHistoryKey] = useState(0);
+
+  // Drawing mode state
+  const [drawingMode, setDrawingMode] = useState(false);
+  const [selectedShape, setSelectedShape] = useState<ShapeType>('rectangle');
+  const [selectedColor, setSelectedColor] = useState('#FF0000');
+  const [strokeWidth, setStrokeWidth] = useState(4);
+  const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
 
   // Initialize selected version to current version
   useEffect(() => {
@@ -175,6 +183,50 @@ export function DocumentReviewPage() {
   const handleCancelLocationComment = () => {
     setPendingAnnotation(null);
   };
+
+  const handleShapeComplete = (shape: DrawingShape) => {
+    // Save the shape to state (purely visual markup)
+    setShapes(prev => {
+      const updated = [...prev, shape];
+      console.log('Shape saved. Total shapes:', updated.length);
+      return updated;
+    });
+  };
+
+  const handleShapeSelect = (shapeId: string | null) => {
+    setSelectedShapeId(shapeId);
+  };
+
+  const handleDeleteShape = () => {
+    if (!selectedShapeId) return;
+
+    setShapes(prev => prev.filter(shape => shape.id !== selectedShapeId));
+    setSelectedShapeId(null);
+    console.log('Shape deleted:', selectedShapeId);
+  };
+
+  const handleToggleDrawingMode = () => {
+    const newDrawingMode = !drawingMode;
+    setDrawingMode(newDrawingMode);
+
+    // Deselect any selected shape when entering drawing mode
+    if (newDrawingMode && selectedShapeId) {
+      setSelectedShapeId(null);
+    }
+  };
+
+  // Keyboard handler for Delete key (only when drawing mode is OFF)
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Delete' && selectedShapeId && !drawingMode) {
+        e.preventDefault();
+        handleDeleteShape();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedShapeId, drawingMode]);
 
   const handleVersionSelect = (versionId: string) => {
     setSelectedVersionId(versionId);
@@ -376,6 +428,110 @@ export function DocumentReviewPage() {
               >
                 {annotationMode ? '✓ Annotation Mode' : '+ Annotation Mode'}
               </button>
+
+              <button
+                className={`document-review-page__annotation-toggle ${drawingMode ? 'document-review-page__annotation-toggle--active' : ''}`}
+                onClick={handleToggleDrawingMode}
+                title={drawingMode ? 'Disable drawing mode' : 'Enable drawing mode'}
+                aria-label={drawingMode ? 'Disable drawing mode' : 'Enable drawing mode'}
+                aria-pressed={drawingMode}
+              >
+                {drawingMode ? '✓ Drawing Mode' : '+ Drawing Mode'}
+              </button>
+
+              {drawingMode && (
+                <>
+                  <div className="document-review-page__toolbar-divider" />
+
+                  {/* Shape Selector */}
+                  <div className="document-review-page__toolbar-section">
+                    <span className="document-review-page__toolbar-label">Shape:</span>
+                    <div className="document-review-page__toolbar-button-group">
+                      <button
+                        className={`document-review-page__toolbar-button ${selectedShape === 'rectangle' ? 'document-review-page__toolbar-button--active' : ''}`}
+                        onClick={() => setSelectedShape('rectangle')}
+                        title="Rectangle"
+                      >
+                        ▭
+                      </button>
+                      <button
+                        className={`document-review-page__toolbar-button ${selectedShape === 'circle' ? 'document-review-page__toolbar-button--active' : ''}`}
+                        onClick={() => setSelectedShape('circle')}
+                        title="Circle"
+                      >
+                        ○
+                      </button>
+                      <button
+                        className={`document-review-page__toolbar-button ${selectedShape === 'freehand' ? 'document-review-page__toolbar-button--active' : ''}`}
+                        onClick={() => setSelectedShape('freehand')}
+                        title="Freehand"
+                      >
+                        ✎
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="document-review-page__toolbar-divider" />
+
+                  {/* Color Picker */}
+                  <div className="document-review-page__toolbar-section">
+                    <span className="document-review-page__toolbar-label">Color:</span>
+                    <div className="document-review-page__toolbar-color-grid">
+                      {['#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF', '#000000', '#FFFFFF'].map(color => (
+                        <div
+                          key={color}
+                          role="button"
+                          tabIndex={0}
+                          className={`document-review-page__toolbar-color ${selectedColor === color ? 'document-review-page__toolbar-color--active' : ''}`}
+                          style={{ backgroundColor: color }}
+                          onClick={() => setSelectedColor(color)}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setSelectedColor(color);
+                            }
+                          }}
+                          title={color}
+                          aria-label={`Select color ${color}`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="document-review-page__toolbar-divider" />
+
+                  {/* Stroke Width */}
+                  <div className="document-review-page__toolbar-section">
+                    <span className="document-review-page__toolbar-label">Width:</span>
+                    <div className="document-review-page__toolbar-button-group">
+                      {[2, 4, 7].map(width => (
+                        <button
+                          key={width}
+                          className={`document-review-page__toolbar-button ${strokeWidth === width ? 'document-review-page__toolbar-button--active' : ''}`}
+                          onClick={() => setStrokeWidth(width)}
+                          title={`${width}px`}
+                        >
+                          <div className="document-review-page__width-indicator" style={{ height: `${width * 1.5}px` }} />
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* Delete Button (shown when shape is selected, even outside drawing mode) */}
+              {selectedShapeId && (
+                <>
+                  <div className="document-review-page__toolbar-divider" />
+                  <button
+                    className="document-review-page__annotation-toggle document-review-page__annotation-toggle--destructive"
+                    onClick={handleDeleteShape}
+                    title="Delete selected shape (Delete key)"
+                  >
+                    🗑️ Delete Shape
+                  </button>
+                </>
+              )}
             </div>
           )}
           {version && (
@@ -387,6 +543,14 @@ export function DocumentReviewPage() {
                 onPinClick={handlePinClick}
                 activeCommentId={activeCommentId}
                 annotationsEnabled={canComment && annotationMode}
+                drawingEnabled={canComment && drawingMode}
+                drawingShape={selectedShape}
+                drawingColor={selectedColor}
+                drawingStrokeWidth={strokeWidth}
+                shapes={shapes}
+                selectedShapeId={selectedShapeId}
+                onShapeComplete={handleShapeComplete}
+                onShapeSelect={handleShapeSelect}
               />
             ) : (
               <DocumentViewer
@@ -396,6 +560,14 @@ export function DocumentReviewPage() {
                 onPinClick={handlePinClick}
                 activeCommentId={activeCommentId}
                 annotationsEnabled={canComment && annotationMode}
+                drawingEnabled={canComment && drawingMode}
+                drawingShape={selectedShape}
+                drawingColor={selectedColor}
+                drawingStrokeWidth={strokeWidth}
+                shapes={shapes}
+                selectedShapeId={selectedShapeId}
+                onShapeComplete={handleShapeComplete}
+                onShapeSelect={handleShapeSelect}
               />
             )
           )}

@@ -16,7 +16,9 @@
       "Bash(npx shadcn@latest add button card dialog input label select -y)",
       "Bash(grep:*)",
       "Bash(find:*)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(git merge:*)",
+      "Bash(git stash:*)"
     ],
     "deny": [],
     "ask": []

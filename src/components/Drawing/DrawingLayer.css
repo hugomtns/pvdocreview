@@ -1,0 +1,39 @@
+.drawing-layer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  user-select: none;
+}
+
+.drawing-layer--enabled {
+  pointer-events: all;
+  cursor: crosshair;
+}
+
+.drawing-layer__svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  overflow: visible;
+}
+
+.drawing-layer__preview {
+  pointer-events: none;
+  transition: none;
+}
+
+.drawing-layer__shape {
+  pointer-events: all;
+  cursor: pointer;
+  transition: stroke 150ms ease, stroke-width 150ms ease;
+}
+
+.drawing-layer__shape:hover {
+  opacity: 0.8;
+}
