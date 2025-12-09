@@ -287,7 +287,7 @@ export function DrawingLayer({
       onMouseUp={handleMouseUp}
       onMouseLeave={handleMouseUp} // Complete drawing if mouse leaves
     >
-      <svg className="drawing-layer__svg">
+      <svg className="drawing-layer__svg" viewBox="0 0 100 100" preserveAspectRatio="none">
         {renderSavedShapes()}
         {renderPreview()}
       </svg>
