@@ -15,6 +15,8 @@ interface CommentPanelProps {
   canResolve?: boolean;
   canComment?: boolean;
   loading?: boolean;
+  getVersionNumber?: (versionId: string) => number | undefined;
+  currentVersionId?: string;
 }
 
 export function CommentPanel({
@@ -27,6 +29,8 @@ export function CommentPanel({
   canResolve = false,
   canComment = false,
   loading = false,
+  getVersionNumber,
+  currentVersionId,
 }: CommentPanelProps) {
   const [showResolved, setShowResolved] = useState(true);
   const [isAddingComment, setIsAddingComment] = useState(false);
@@ -133,6 +137,8 @@ export function CommentPanel({
                     onPinClick={onPinClick}
                     isActive={comment.id === activeCommentId}
                     canResolve={canResolve}
+                    versionNumber={getVersionNumber?.(comment.versionId)}
+                    isCurrentVersion={comment.versionId === currentVersionId}
                   />
                 </div>
               ))}
@@ -157,6 +163,8 @@ export function CommentPanel({
                     onUnresolve={onUnresolve}
                     isActive={comment.id === activeCommentId}
                     canResolve={canResolve}
+                    versionNumber={getVersionNumber?.(comment.versionId)}
+                    isCurrentVersion={comment.versionId === currentVersionId}
                   />
                 </div>
               ))}

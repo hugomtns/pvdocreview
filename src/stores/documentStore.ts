@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { db } from '@/lib/db';
-import type { Document, DocumentStatus, WorkflowAction, WorkflowEvent } from '@/types';
+import type { Document, DocumentStatus, WorkflowEvent } from '@/types';
 
 interface DocumentState {
   documents: Document[];

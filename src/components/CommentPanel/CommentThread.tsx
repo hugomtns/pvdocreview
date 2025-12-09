@@ -8,6 +8,8 @@ interface CommentThreadProps {
   onPinClick?: (commentId: string) => void;
   isActive?: boolean;
   canResolve?: boolean;
+  versionNumber?: number;
+  isCurrentVersion?: boolean;
 }
 
 export function CommentThread({
@@ -17,6 +19,8 @@ export function CommentThread({
   onPinClick,
   isActive = false,
   canResolve = false,
+  versionNumber,
+  isCurrentVersion = true,
 }: CommentThreadProps) {
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -42,6 +46,11 @@ export function CommentThread({
           <span className={`comment-thread__role-badge comment-thread__role-badge--${comment.authorRole}`}>
             {comment.authorRole}
           </span>
+          {versionNumber !== undefined && (
+            <span className={`comment-thread__version-badge ${!isCurrentVersion ? 'comment-thread__version-badge--old' : ''}`}>
+              v{versionNumber}
+            </span>
+          )}
         </div>
         {comment.type === 'location' && comment.anchor && (
           <button

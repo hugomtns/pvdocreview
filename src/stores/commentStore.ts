@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { db } from '@/lib/db';
-import type { Comment, CommentType, LocationAnchor } from '@/types';
+import type { Comment } from '@/types';
 
 interface CommentState {
   comments: Comment[];

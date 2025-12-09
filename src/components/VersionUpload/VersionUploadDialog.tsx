@@ -32,7 +32,7 @@ export function VersionUploadDialog({ documentId, documentName, onVersionUploade
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const { updateDocumentStatus, recordWorkflowEvent } = useDocumentStore();
+  const { recordWorkflowEvent } = useDocumentStore();
   const currentUser = useAuthStore(state => state.currentUser);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

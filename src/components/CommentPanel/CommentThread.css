@@ -66,6 +66,22 @@
   color: var(--color-primary);
 }
 
+.comment-thread__version-badge {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-medium);
+  padding: 2px var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-surface);
+  color: var(--color-text-secondary);
+  border: 1px solid var(--color-border);
+}
+
+.comment-thread__version-badge--old {
+  background-color: var(--color-warning-light);
+  color: var(--color-warning);
+  border-color: var(--color-warning);
+}
+
 .comment-thread__pin-link {
   font-size: var(--font-size-xs);
   color: var(--color-primary);

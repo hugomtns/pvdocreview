@@ -10,6 +10,7 @@ import { WorkflowActions } from '@/components/WorkflowActions/WorkflowActions';
 import { WorkflowHistory } from '@/components/WorkflowHistory/WorkflowHistory';
 import { VersionHistory } from '@/components/VersionHistory/VersionHistory';
 import { VersionUploadDialog } from '@/components/VersionUpload/VersionUploadDialog';
+import { VersionBanner } from '@/components/VersionBanner/VersionBanner';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
@@ -23,6 +24,7 @@ export function DocumentReviewPage() {
   const currentUser = useAuthStore(state => state.currentUser);
   const [version, setVersion] = useState<DocumentVersion | null>(null);
   const [selectedVersionId, setSelectedVersionId] = useState<string | null>(null);
+  const [versions, setVersions] = useState<DocumentVersion[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
@@ -68,6 +70,14 @@ export function DocumentReviewPage() {
         }
 
         setVersion(versionToLoad);
+
+        // Load all versions for version mapping
+        const allVersions = await db.versions
+          .where('documentId')
+          .equals(id)
+          .toArray();
+        setVersions(allVersions);
+
         setLoading(false);
 
         // Load comments for this document/version
@@ -82,6 +92,11 @@ export function DocumentReviewPage() {
   }, [id, selectedVersionId, getDocument, loadComments]);
 
   const document = id ? getDocument(id) : null;
+
+  // Helper to get version number from versionId
+  const getVersionNumber = (versionId: string): number | undefined => {
+    return versions.find(v => v.id === versionId)?.versionNumber;
+  };
 
   const handlePinClick = (commentId: string) => {
     setActiveCommentId(commentId);
@@ -162,6 +177,13 @@ export function DocumentReviewPage() {
   const handleVersionSelect = (versionId: string) => {
     setSelectedVersionId(versionId);
     setLoading(true);
+  };
+
+  const handleViewCurrentVersion = () => {
+    if (document) {
+      setSelectedVersionId(document.currentVersionId);
+      setLoading(true);
+    }
   };
 
   const handleVersionUploaded = async () => {
@@ -285,6 +307,12 @@ export function DocumentReviewPage() {
         </aside>
 
         <main className="document-review-page__main">
+          {version && selectedVersionId !== document.currentVersionId && (
+            <VersionBanner
+              versionNumber={version.versionNumber}
+              onViewCurrent={handleViewCurrentVersion}
+            />
+          )}
           {canComment && version && (
             <div className="document-review-page__toolbar">
               <button
@@ -334,6 +362,8 @@ export function DocumentReviewPage() {
               canResolve={canResolve}
               canComment={canComment}
               loading={commentsLoading}
+              getVersionNumber={getVersionNumber}
+              currentVersionId={document.currentVersionId}
             />
           </div>
         </aside>
