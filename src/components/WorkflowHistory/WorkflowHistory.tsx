@@ -32,15 +32,18 @@ export function WorkflowHistory({ documentId }: WorkflowHistoryProps) {
   const { getWorkflowEvents } = useDocumentStore();
   const [events, setEvents] = useState<WorkflowEvent[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadEvents = async () => {
       setLoading(true);
+      setError(null);
       try {
         const workflowEvents = await getWorkflowEvents(documentId);
         setEvents(workflowEvents);
       } catch (err) {
         console.error('Failed to load workflow events:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load workflow history');
       } finally {
         setLoading(false);
       }
@@ -54,6 +57,16 @@ export function WorkflowHistory({ documentId }: WorkflowHistoryProps) {
       <div className="workflow-history">
         <div className="workflow-history__loading">
           Loading workflow history...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="workflow-history">
+        <div className="workflow-history__error">
+          <p>{error}</p>
         </div>
       </div>
     );

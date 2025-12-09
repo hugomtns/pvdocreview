@@ -13,6 +13,24 @@
   color: var(--color-text-muted);
 }
 
+.workflow-history__error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: var(--spacing-2xl);
+  color: var(--color-error);
+  background-color: var(--color-error-light);
+  border: 1px solid var(--color-error);
+  border-radius: var(--radius-md);
+}
+
+.workflow-history__error p {
+  margin: 0;
+  font-size: var(--font-size-sm);
+}
+
 .workflow-history__empty p {
   margin: 0 0 var(--spacing-xs) 0;
   font-size: var(--font-size-sm);

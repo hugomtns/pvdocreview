@@ -28,10 +28,12 @@ export function VersionHistory({
 }: VersionHistoryProps) {
   const [versions, setVersions] = useState<DocumentVersion[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const loadVersions = async () => {
       setLoading(true);
+      setError(null);
       try {
         const allVersions = await db.versions
           .where('documentId')
@@ -44,6 +46,7 @@ export function VersionHistory({
         setVersions(allVersions);
       } catch (err) {
         console.error('Failed to load versions:', err);
+        setError(err instanceof Error ? err.message : 'Failed to load versions');
       } finally {
         setLoading(false);
       }
@@ -57,6 +60,16 @@ export function VersionHistory({
       <div className="version-history">
         <div className="version-history__loading">
           Loading versions...
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="version-history">
+        <div className="version-history__error">
+          <p>{error}</p>
         </div>
       </div>
     );

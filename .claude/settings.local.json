@@ -13,7 +13,8 @@
       "Bash(npx shadcn@latest init -d)",
       "Bash(npm install:*)",
       "Bash(npx tailwindcss init -p)",
-      "Bash(npx shadcn@latest add button card dialog input label select -y)"
+      "Bash(npx shadcn@latest add button card dialog input label select -y)",
+      "Bash(grep:*)"
     ],
     "deny": [],
     "ask": []
