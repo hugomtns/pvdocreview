@@ -34,6 +34,7 @@ export function DrawingLayer({
   const [isDrawing, setIsDrawing] = useState(false);
   const [startPos, setStartPos] = useState<DrawCoordinates | null>(null);
   const [currentPos, setCurrentPos] = useState<DrawCoordinates | null>(null);
+  const [pathPoints, setPathPoints] = useState<DrawCoordinates[]>([]);
 
   // Convert mouse coordinates to percentage
   const getPercentageCoordinates = (e: React.MouseEvent): DrawCoordinates => {
@@ -49,6 +50,37 @@ export function DrawingLayer({
     };
   };
 
+  // Convert path points to SVG path string
+  const pointsToSVGPath = (points: DrawCoordinates[]): string => {
+    if (points.length === 0) return '';
+
+    const pathData = points.map((point, index) => {
+      if (index === 0) {
+        return `M ${point.x} ${point.y}`;
+      }
+      return `L ${point.x} ${point.y}`;
+    }).join(' ');
+
+    return pathData;
+  };
+
+  // Calculate bounding box for freehand path
+  const calculatePathBounds = (points: DrawCoordinates[]) => {
+    if (points.length === 0) {
+      return { x1: 0, y1: 0, x2: 0, y2: 0 };
+    }
+
+    const xs = points.map(p => p.x);
+    const ys = points.map(p => p.y);
+
+    return {
+      x1: Math.min(...xs),
+      y1: Math.min(...ys),
+      x2: Math.max(...xs),
+      y2: Math.max(...ys),
+    };
+  };
+
   const handleMouseDown = (e: React.MouseEvent) => {
     if (!enabled) return;
 
@@ -56,6 +88,11 @@ export function DrawingLayer({
     setIsDrawing(true);
     setStartPos(coords);
     setCurrentPos(coords);
+
+    // For freehand, start tracking path points
+    if (shapeType === 'freehand') {
+      setPathPoints([coords]);
+    }
 
     console.log('🎨 Drawing started:', shapeType, 'at', coords);
   };
@@ -65,6 +102,11 @@ export function DrawingLayer({
 
     const coords = getPercentageCoordinates(e);
     setCurrentPos(coords);
+
+    // For freehand, add point to path
+    if (shapeType === 'freehand') {
+      setPathPoints(prev => [...prev, coords]);
+    }
   };
 
   const handleMouseUp = () => {
@@ -79,12 +121,13 @@ export function DrawingLayer({
       page: pageNumber,
       color: color,
       strokeWidth: strokeWidth,
-      bounds: {
+      bounds: shapeType === 'freehand' ? calculatePathBounds(pathPoints) : {
         x1: Math.min(startPos.x, currentPos.x),
         y1: Math.min(startPos.y, currentPos.y),
         x2: Math.max(startPos.x, currentPos.x),
         y2: Math.max(startPos.y, currentPos.y),
-      }
+      },
+      ...(shapeType === 'freehand' && { path: pointsToSVGPath(pathPoints) })
     };
 
     console.log('✅ Shape completed:', shape);
@@ -92,6 +135,7 @@ export function DrawingLayer({
 
     setStartPos(null);
     setCurrentPos(null);
+    setPathPoints([]);
   };
 
   // Render preview while drawing
@@ -136,6 +180,18 @@ export function DrawingLayer({
           stroke={color}
           strokeWidth={strokeWidth}
           strokeDasharray="5,5"
+          className="drawing-layer__preview"
+        />
+      );
+    } else if (shapeType === 'freehand' && pathPoints.length > 0) {
+      return (
+        <path
+          d={pointsToSVGPath(pathPoints)}
+          fill="none"
+          stroke={color}
+          strokeWidth={strokeWidth}
+          strokeLinecap="round"
+          strokeLinejoin="round"
           className="drawing-layer__preview"
         />
       );
@@ -192,6 +248,16 @@ export function DrawingLayer({
             cy={`${centerY}%`}
             rx={`${radiusX}%`}
             ry={`${radiusY}%`}
+            {...shapeProps}
+          />
+        );
+      } else if (type === 'freehand' && shape.path) {
+        return (
+          <path
+            key={shape.id}
+            d={shape.path}
+            strokeLinecap="round"
+            strokeLinejoin="round"
             {...shapeProps}
           />
         );

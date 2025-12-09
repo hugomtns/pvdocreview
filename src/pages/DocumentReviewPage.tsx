@@ -451,6 +451,13 @@ export function DocumentReviewPage() {
                       >
                         ○
                       </button>
+                      <button
+                        className={`document-review-page__toolbar-button ${selectedShape === 'freehand' ? 'document-review-page__toolbar-button--active' : ''}`}
+                        onClick={() => setSelectedShape('freehand')}
+                        title="Freehand"
+                      >
+                        ✎
+                      </button>
                     </div>
                   </div>
 

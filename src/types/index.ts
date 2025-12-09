@@ -52,7 +52,7 @@ export interface LocationAnchor {
 }
 
 // Drawing Shapes
-export type ShapeType = 'circle' | 'rectangle';
+export type ShapeType = 'circle' | 'rectangle' | 'freehand';
 
 export interface DrawingShape {
   id: string;
@@ -67,6 +67,7 @@ export interface DrawingShape {
     x2: number;                 // Percentage (0-100) from left
     y2: number;                 // Percentage (0-100) from top
   };
+  path?: string;                // SVG path data for freehand drawings
 }
 
 export interface Comment {
