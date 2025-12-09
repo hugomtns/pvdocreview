@@ -39,6 +39,7 @@ export function DocumentReviewPage() {
   const [selectedShape, setSelectedShape] = useState<ShapeType>('rectangle');
   const [selectedColor, setSelectedColor] = useState('#FF0000');
   const [strokeWidth, setStrokeWidth] = useState(2);
+  const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
 
   // Initialize selected version to current version
   useEffect(() => {
@@ -191,6 +192,31 @@ export function DocumentReviewPage() {
       return updated;
     });
   };
+
+  const handleShapeSelect = (shapeId: string | null) => {
+    setSelectedShapeId(shapeId);
+  };
+
+  const handleDeleteShape = () => {
+    if (!selectedShapeId) return;
+
+    setShapes(prev => prev.filter(shape => shape.id !== selectedShapeId));
+    setSelectedShapeId(null);
+    console.log('Shape deleted:', selectedShapeId);
+  };
+
+  // Keyboard handler for Delete key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Delete' && selectedShapeId && drawingMode) {
+        e.preventDefault();
+        handleDeleteShape();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedShapeId, drawingMode]);
 
   const handleVersionSelect = (versionId: string) => {
     setSelectedVersionId(versionId);
@@ -473,6 +499,20 @@ export function DocumentReviewPage() {
                       ))}
                     </div>
                   </div>
+
+                  {/* Delete Button (shown when shape is selected) */}
+                  {selectedShapeId && (
+                    <>
+                      <div className="document-review-page__toolbar-divider" />
+                      <button
+                        className="document-review-page__annotation-toggle document-review-page__annotation-toggle--destructive"
+                        onClick={handleDeleteShape}
+                        title="Delete selected shape (Delete key)"
+                      >
+                        🗑️ Delete Shape
+                      </button>
+                    </>
+                  )}
                 </>
               )}
             </div>
@@ -491,7 +531,9 @@ export function DocumentReviewPage() {
                 drawingColor={selectedColor}
                 drawingStrokeWidth={strokeWidth}
                 shapes={shapes}
+                selectedShapeId={selectedShapeId}
                 onShapeComplete={handleShapeComplete}
+                onShapeSelect={handleShapeSelect}
               />
             ) : (
               <DocumentViewer
@@ -506,7 +548,9 @@ export function DocumentReviewPage() {
                 drawingColor={selectedColor}
                 drawingStrokeWidth={strokeWidth}
                 shapes={shapes}
+                selectedShapeId={selectedShapeId}
                 onShapeComplete={handleShapeComplete}
+                onShapeSelect={handleShapeSelect}
               />
             )
           )}

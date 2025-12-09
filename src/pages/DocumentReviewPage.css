@@ -132,6 +132,17 @@
   border-color: var(--color-primary);
 }
 
+.document-review-page__annotation-toggle--destructive {
+  background-color: var(--color-error-light);
+  color: var(--color-error);
+  border-color: var(--color-error);
+}
+
+.document-review-page__annotation-toggle--destructive:hover {
+  background-color: var(--color-error);
+  color: white;
+}
+
 /* Drawing toolbar elements */
 .document-review-page__toolbar-divider {
   width: 1px;

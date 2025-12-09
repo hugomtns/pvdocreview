@@ -38,7 +38,9 @@ interface DocumentViewerProps {
   drawingColor?: string;
   drawingStrokeWidth?: number;
   shapes?: DrawingShape[];
+  selectedShapeId?: string | null;
   onShapeComplete?: (shape: DrawingShape) => void;
+  onShapeSelect?: (shapeId: string | null) => void;
 }
 
 export function DocumentViewer({
@@ -55,7 +57,9 @@ export function DocumentViewer({
   drawingColor = '#FF0000',
   drawingStrokeWidth = 2,
   shapes = [],
+  selectedShapeId,
   onShapeComplete,
+  onShapeSelect,
 }: DocumentViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -267,7 +271,9 @@ export function DocumentViewer({
                     color={drawingColor}
                     strokeWidth={drawingStrokeWidth}
                     shapes={shapes}
+                    selectedShapeId={selectedShapeId}
                     onShapeComplete={onShapeComplete}
+                    onShapeSelect={onShapeSelect}
                   />
                 )}
               </div>

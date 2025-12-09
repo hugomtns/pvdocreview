@@ -9,7 +9,9 @@ interface DrawingLayerProps {
   color: string;
   strokeWidth: number;
   shapes?: DrawingShape[];
+  selectedShapeId?: string | null;
   onShapeComplete: (shape: DrawingShape) => void;
+  onShapeSelect?: (shapeId: string | null) => void;
 }
 
 interface DrawCoordinates {
@@ -24,7 +26,9 @@ export function DrawingLayer({
   color,
   strokeWidth,
   shapes = [],
+  selectedShapeId,
   onShapeComplete,
+  onShapeSelect,
 }: DrawingLayerProps) {
   const layerRef = useRef<HTMLDivElement>(null);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -149,6 +153,20 @@ export function DrawingLayer({
       const { bounds, type, color, strokeWidth } = shape;
       const width = bounds.x2 - bounds.x1;
       const height = bounds.y2 - bounds.y1;
+      const isSelected = shape.id === selectedShapeId;
+
+      const handleShapeClick = (e: React.MouseEvent) => {
+        e.stopPropagation(); // Prevent triggering drawing mode
+        onShapeSelect?.(shape.id);
+      };
+
+      const shapeProps = {
+        style: { cursor: 'pointer' },
+        onClick: handleShapeClick,
+        stroke: isSelected ? '#FF6600' : color,
+        strokeWidth: isSelected ? strokeWidth + 2 : strokeWidth,
+        fill: 'none',
+      };
 
       if (type === 'rectangle') {
         return (
@@ -158,9 +176,7 @@ export function DrawingLayer({
             y={`${bounds.y1}%`}
             width={`${width}%`}
             height={`${height}%`}
-            fill="none"
-            stroke={color}
-            strokeWidth={strokeWidth}
+            {...shapeProps}
           />
         );
       } else if (type === 'circle') {
@@ -176,9 +192,7 @@ export function DrawingLayer({
             cy={`${centerY}%`}
             rx={`${radiusX}%`}
             ry={`${radiusY}%`}
-            fill="none"
-            stroke={color}
-            strokeWidth={strokeWidth}
+            {...shapeProps}
           />
         );
       }

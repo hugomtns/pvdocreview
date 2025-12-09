@@ -34,7 +34,9 @@ interface ImageViewerProps {
   drawingColor?: string;
   drawingStrokeWidth?: number;
   shapes?: DrawingShape[];
+  selectedShapeId?: string | null;
   onShapeComplete?: (shape: DrawingShape) => void;
+  onShapeSelect?: (shapeId: string | null) => void;
 }
 
 export function ImageViewer({
@@ -51,7 +53,9 @@ export function ImageViewer({
   drawingColor = '#FF0000',
   drawingStrokeWidth = 2,
   shapes = [],
+  selectedShapeId,
   onShapeComplete,
+  onShapeSelect,
 }: ImageViewerProps) {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [loading, setLoading] = useState(true);
@@ -227,7 +231,9 @@ export function ImageViewer({
                   color={drawingColor}
                   strokeWidth={drawingStrokeWidth}
                   shapes={shapes}
+                  selectedShapeId={selectedShapeId}
                   onShapeComplete={onShapeComplete}
+                  onShapeSelect={onShapeSelect}
                 />
               )}
             </div>
