@@ -30,7 +30,7 @@ export function DocumentReviewPage() {
   const [activeCommentId, setActiveCommentId] = useState<string | null>(null);
   const [annotationMode, setAnnotationMode] = useState(false);
   const [pendingAnnotation, setPendingAnnotation] = useState<{ pageNumber: number; anchor: LocationAnchor } | null>(null);
-  const [pendingDrawing, setPendingDrawing] = useState<DrawingShape | null>(null);
+  const [shapes, setShapes] = useState<DrawingShape[]>([]); // Will be rendered in viewers (Step 5)
   const [workflowHistoryKey, setWorkflowHistoryKey] = useState(0);
   const [versionHistoryKey, setVersionHistoryKey] = useState(0);
 
@@ -184,39 +184,12 @@ export function DocumentReviewPage() {
   };
 
   const handleShapeComplete = (shape: DrawingShape) => {
-    // Show the comment input dialog for the drawing
-    setPendingDrawing(shape);
-  };
-
-  const handleSubmitDrawingComment = async (content: string, isPrivate: boolean) => {
-    if (!currentUser || !document || !version || !pendingDrawing) return;
-
-    try {
-      const newComment = await addComment({
-        documentId: document.id,
-        versionId: version.id,
-        type: 'document',
-        drawing: pendingDrawing,
-        content,
-        authorId: currentUser.id,
-        authorName: currentUser.name,
-        authorRole: currentUser.role,
-        resolved: false,
-        isPrivate,
-      });
-
-      // Set the new comment as active
-      setActiveCommentId(newComment.id);
-
-      // Close the dialog
-      setPendingDrawing(null);
-    } catch (err) {
-      console.error('Failed to add drawing comment:', err);
-    }
-  };
-
-  const handleCancelDrawingComment = () => {
-    setPendingDrawing(null);
+    // Save the shape to state (purely visual markup)
+    setShapes(prev => {
+      const updated = [...prev, shape];
+      console.log('Shape saved. Total shapes:', updated.length);
+      return updated;
+    });
   };
 
   const handleVersionSelect = (versionId: string) => {
@@ -486,7 +459,7 @@ export function DocumentReviewPage() {
                           onClick={() => setStrokeWidth(width)}
                           title={`${width}px`}
                         >
-                          {width}
+                          <div className="document-review-page__width-indicator" style={{ height: `${width * 2}px` }} />
                         </button>
                       ))}
                     </div>
@@ -508,6 +481,7 @@ export function DocumentReviewPage() {
                 drawingShape={selectedShape}
                 drawingColor={selectedColor}
                 drawingStrokeWidth={strokeWidth}
+                shapes={shapes}
                 onShapeComplete={handleShapeComplete}
               />
             ) : (
@@ -522,6 +496,7 @@ export function DocumentReviewPage() {
                 drawingShape={selectedShape}
                 drawingColor={selectedColor}
                 drawingStrokeWidth={strokeWidth}
+                shapes={shapes}
                 onShapeComplete={handleShapeComplete}
               />
             )
@@ -559,20 +534,6 @@ export function DocumentReviewPage() {
               onSubmit={handleSubmitLocationComment}
               onCancel={handleCancelLocationComment}
               placeholder="Add a comment about this location..."
-            />
-          </div>
-        </div>
-      )}
-
-      {/* Drawing comment input modal */}
-      {pendingDrawing && (
-        <div className="document-review-page__modal-overlay" onClick={handleCancelDrawingComment}>
-          <div className="document-review-page__modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3 className="document-review-page__modal-title">Add Drawing Comment</h3>
-            <CommentInput
-              onSubmit={handleSubmitDrawingComment}
-              onCancel={handleCancelDrawingComment}
-              placeholder="Add a comment about this drawing..."
             />
           </div>
         </div>

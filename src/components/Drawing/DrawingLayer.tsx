@@ -8,6 +8,7 @@ interface DrawingLayerProps {
   shapeType: ShapeType;
   color: string;
   strokeWidth: number;
+  shapes?: DrawingShape[];
   onShapeComplete: (shape: DrawingShape) => void;
 }
 
@@ -22,6 +23,7 @@ export function DrawingLayer({
   shapeType,
   color,
   strokeWidth,
+  shapes = [],
   onShapeComplete,
 }: DrawingLayerProps) {
   const layerRef = useRef<HTMLDivElement>(null);
@@ -138,6 +140,53 @@ export function DrawingLayer({
     return null;
   };
 
+  // Render saved shapes for this page
+  const renderSavedShapes = () => {
+    // Filter shapes for current page
+    const pageShapes = shapes.filter(shape => shape.page === pageNumber);
+
+    return pageShapes.map(shape => {
+      const { bounds, type, color, strokeWidth } = shape;
+      const width = bounds.x2 - bounds.x1;
+      const height = bounds.y2 - bounds.y1;
+
+      if (type === 'rectangle') {
+        return (
+          <rect
+            key={shape.id}
+            x={`${bounds.x1}%`}
+            y={`${bounds.y1}%`}
+            width={`${width}%`}
+            height={`${height}%`}
+            fill="none"
+            stroke={color}
+            strokeWidth={strokeWidth}
+          />
+        );
+      } else if (type === 'circle') {
+        const centerX = (bounds.x1 + bounds.x2) / 2;
+        const centerY = (bounds.y1 + bounds.y2) / 2;
+        const radiusX = width / 2;
+        const radiusY = height / 2;
+
+        return (
+          <ellipse
+            key={shape.id}
+            cx={`${centerX}%`}
+            cy={`${centerY}%`}
+            rx={`${radiusX}%`}
+            ry={`${radiusY}%`}
+            fill="none"
+            stroke={color}
+            strokeWidth={strokeWidth}
+          />
+        );
+      }
+
+      return null;
+    });
+  };
+
   return (
     <div
       ref={layerRef}
@@ -148,6 +197,7 @@ export function DrawingLayer({
       onMouseLeave={handleMouseUp} // Complete drawing if mouse leaves
     >
       <svg className="drawing-layer__svg">
+        {renderSavedShapes()}
         {renderPreview()}
       </svg>
     </div>

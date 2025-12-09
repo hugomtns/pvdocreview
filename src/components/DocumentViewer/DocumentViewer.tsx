@@ -37,6 +37,7 @@ interface DocumentViewerProps {
   drawingShape?: ShapeType;
   drawingColor?: string;
   drawingStrokeWidth?: number;
+  shapes?: DrawingShape[];
   onShapeComplete?: (shape: DrawingShape) => void;
 }
 
@@ -53,6 +54,7 @@ export function DocumentViewer({
   drawingShape = 'rectangle',
   drawingColor = '#FF0000',
   drawingStrokeWidth = 2,
+  shapes = [],
   onShapeComplete,
 }: DocumentViewerProps) {
   const [numPages, setNumPages] = useState<number>(0);
@@ -264,6 +266,7 @@ export function DocumentViewer({
                     shapeType={drawingShape}
                     color={drawingColor}
                     strokeWidth={drawingStrokeWidth}
+                    shapes={shapes}
                     onShapeComplete={onShapeComplete}
                   />
                 )}

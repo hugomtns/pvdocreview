@@ -198,7 +198,15 @@
   cursor: pointer;
   transition: all var(--transition-fast);
   padding: 0;
-  background-color: transparent !important; /* Will be overridden by inline style */
+  background: none;
+  box-shadow: none;
+  outline: none;
+}
+
+.document-review-page__width-indicator {
+  width: 24px;
+  background-color: currentColor;
+  border-radius: 2px;
 }
 
 .document-review-page__toolbar-color:hover {
