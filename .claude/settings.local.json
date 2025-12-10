@@ -23,7 +23,8 @@
       "WebFetch(domain:ui.shadcn.com)",
       "Bash(git log:*)",
       "Bash(claude mcp list:*)",
-      "Bash(claude mcp add --transport stdio shadcn --scope project -- npx shadcn@latest mcp)"
+      "Bash(claude mcp add --transport stdio shadcn --scope project -- npx shadcn@latest mcp)",
+      "Bash(git fetch:*)"
     ],
     "deny": [],
     "ask": []
