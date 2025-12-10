@@ -201,7 +201,7 @@ export function DocumentReviewPage() {
     if (!currentUser || !document || !version || !pendingAnnotation) return;
 
     try {
-      const newComment = await addComment({
+      await addComment({
         documentId: document.id,
         versionId: version.id,
         type: 'location',
@@ -213,9 +213,6 @@ export function DocumentReviewPage() {
         resolved: false,
         isPrivate,
       });
-
-      // Set the new comment as active to highlight its pin
-      setActiveCommentId(newComment.id);
 
       // Close the dialog
       setPendingAnnotation(null);
