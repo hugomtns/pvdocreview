@@ -120,9 +120,12 @@ export function ImageViewer({
     // Get the pin position as percentage of image dimensions
     const { x, y } = activeComment.anchor;
 
-    // Calculate absolute position on the image
-    const imgWidth = imgRef.current.width;
-    const imgHeight = imgRef.current.height;
+    // Get the image's rendered (displayed) dimensions
+    const imgRect = imgRef.current.getBoundingClientRect();
+    const imgWidth = imgRect.width;
+    const imgHeight = imgRect.height;
+
+    // Calculate absolute position on the image using displayed dimensions
     const pinX = (x / 100) * imgWidth;
     const pinY = (y / 100) * imgHeight;
 

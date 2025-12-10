@@ -156,12 +156,15 @@ export function DocumentViewer({
       const canvas = pageContainer.querySelector('canvas');
       if (!canvas) return;
 
+      // Get the canvas's rendered (displayed) dimensions
+      const canvasRect = canvas.getBoundingClientRect();
+      const canvasHeight = canvasRect.height;
+
       // Calculate pin position
       const pageTop = pageElement.offsetTop;
       const canvasTop = (pageContainer as HTMLElement).offsetTop + (canvas as HTMLElement).offsetTop;
 
-      // Calculate pin's absolute position
-      const canvasHeight = canvas.height;
+      // Calculate pin's absolute position using displayed height
       const pinYPixels = (y / 100) * canvasHeight;
       const absolutePinY = pageTop + canvasTop + pinYPixels;
 
