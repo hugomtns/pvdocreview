@@ -10,6 +10,7 @@ interface CommentPanelProps {
   comments: Comment[];
   onResolve?: (commentId: string) => void;
   onUnresolve?: (commentId: string) => void;
+  onDelete?: (commentId: string) => void;
   onPinClick?: (commentId: string) => void;
   onAddDocumentComment?: (content: string, isPrivate: boolean) => void;
   activeCommentId?: string | null;
@@ -24,6 +25,7 @@ export function CommentPanel({
   comments,
   onResolve,
   onUnresolve,
+  onDelete,
   onPinClick,
   onAddDocumentComment,
   activeCommentId,
@@ -53,6 +55,12 @@ export function CommentPanel({
     if (!comment.isPrivate) return true;
     if (!currentUser) return false;
     return currentUser.id === comment.authorId || currentUser.role === 'admin';
+  };
+
+  // Check if current user can delete a comment (admin or comment author)
+  const canDeleteComment = (comment: Comment): boolean => {
+    if (!currentUser) return false;
+    return currentUser.role === 'admin' || currentUser.id === comment.authorId;
   };
 
   // Separate location and document comments, filtering private ones
@@ -143,9 +151,11 @@ export function CommentPanel({
                     comment={comment}
                     onResolve={onResolve}
                     onUnresolve={onUnresolve}
+                    onDelete={onDelete}
                     onPinClick={onPinClick}
                     isActive={comment.id === activeCommentId}
                     canResolve={canResolve}
+                    canDelete={canDeleteComment(comment)}
                     versionNumber={getVersionNumber?.(comment.versionId)}
                     isCurrentVersion={comment.versionId === currentVersionId}
                   />
@@ -170,8 +180,10 @@ export function CommentPanel({
                     comment={comment}
                     onResolve={onResolve}
                     onUnresolve={onUnresolve}
+                    onDelete={onDelete}
                     isActive={comment.id === activeCommentId}
                     canResolve={canResolve}
+                    canDelete={canDeleteComment(comment)}
                     versionNumber={getVersionNumber?.(comment.versionId)}
                     isCurrentVersion={comment.versionId === currentVersionId}
                   />

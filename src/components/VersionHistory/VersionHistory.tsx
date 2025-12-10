@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { db } from '@/lib/db';
+import { VersionCard } from './VersionCard';
 import type { DocumentVersion } from '@/types';
 import './VersionHistory.css';
 
@@ -9,16 +10,6 @@ interface VersionHistoryProps {
   selectedVersionId: string;
   onVersionSelect: (versionId: string) => void;
 }
-
-const formatDate = (date: Date): string => {
-  return new Date(date).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-    hour: 'numeric',
-    minute: '2-digit',
-  });
-};
 
 export function VersionHistory({
   documentId,
@@ -93,40 +84,13 @@ export function VersionHistory({
           const isSelected = version.id === selectedVersionId;
 
           return (
-            <button
+            <VersionCard
               key={version.id}
-              className={`version-history__item ${
-                isSelected ? 'version-history__item--selected' : ''
-              }`}
-              onClick={() => onVersionSelect(version.id)}
-            >
-              <div className="version-history__item-header">
-                <span className="version-history__version-number">
-                  Version {version.versionNumber}
-                </span>
-                {isCurrent && (
-                  <span className="version-history__current-badge">
-                    Current
-                  </span>
-                )}
-              </div>
-              <div className="version-history__item-details">
-                <span className="version-history__uploader">
-                  Uploaded by {version.uploadedBy}
-                </span>
-                <span className="version-history__date">
-                  {formatDate(version.uploadedAt)}
-                </span>
-              </div>
-              <div className="version-history__item-meta">
-                <span className="version-history__filename">
-                  {version.fileName}
-                </span>
-                <span className="version-history__pages">
-                  {version.pageCount} {version.pageCount === 1 ? 'page' : 'pages'}
-                </span>
-              </div>
-            </button>
+              version={version}
+              isCurrent={isCurrent}
+              isSelected={isSelected}
+              onSelect={onVersionSelect}
+            />
           );
         })}
       </div>

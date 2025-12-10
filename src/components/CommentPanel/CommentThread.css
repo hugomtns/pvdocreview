@@ -1,10 +1,15 @@
 .comment-thread {
   padding: var(--spacing-md);
   background-color: var(--color-background);
-  border: 1px solid var(--color-border);
+  border: 1px solid var(--color-border-light);
   border-radius: var(--radius-md);
   margin-bottom: var(--spacing-md);
+  box-shadow: var(--shadow-subtle);
   transition: all var(--transition-fast);
+}
+
+.comment-thread:hover {
+  box-shadow: var(--shadow-sm);
 }
 
 .comment-thread:last-child {
@@ -44,26 +49,25 @@
 
 .comment-thread__role-badge {
   font-size: var(--font-size-xs);
-  font-weight: var(--font-weight-medium);
+  font-weight: var(--font-weight-semibold);
   padding: var(--spacing-xs) var(--spacing-sm);
   border-radius: var(--radius-sm);
-  text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.01em;
 }
 
 .comment-thread__role-badge--viewer {
-  background-color: var(--color-neutral-light);
-  color: var(--color-neutral-dark);
+  background-color: var(--color-role-viewer-bg);
+  color: var(--color-role-viewer-text);
 }
 
 .comment-thread__role-badge--reviewer {
-  background-color: var(--color-info-light);
-  color: var(--color-info-dark);
+  background-color: var(--color-role-reviewer-bg);
+  color: var(--color-role-reviewer-text);
 }
 
 .comment-thread__role-badge--admin {
-  background-color: var(--color-primary-light);
-  color: var(--color-primary);
+  background-color: var(--color-role-admin-bg);
+  color: var(--color-role-admin-text);
 }
 
 .comment-thread__version-badge {
@@ -133,6 +137,13 @@
   color: var(--color-text-muted);
 }
 
+.comment-thread__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
 .comment-thread__resolved-badge {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
@@ -169,6 +180,31 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
+}
+
+.comment-thread__delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.comment-thread__delete-button:hover {
+  background-color: var(--color-error-light);
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.comment-thread__delete-button:active {
+  transform: scale(0.95);
 }
 
 .comment-thread__unresolve-button:hover {

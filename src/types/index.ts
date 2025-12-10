@@ -23,7 +23,8 @@ export interface DocumentVersion {
   fileType: 'pdf' | 'image' | 'docx';
   originalFile: Blob;           // Original uploaded file
   pdfFile: Blob;                // PDF for viewing (same as original if PDF/image)
-  uploadedBy: string;           // User ID
+  uploadedBy: string;           // User name
+  uploaderRole: UserRole;       // User role
   uploadedAt: Date;
   pageCount: number;
 }
@@ -58,6 +59,7 @@ export interface DrawingShape {
   id: string;
   type: ShapeType;
   page: number;
+  versionId: string;            // Version this drawing belongs to
   color: string;                // Hex color code (e.g., '#FF0000')
   strokeWidth: number;          // 1-5px
   fill?: string;                // Optional fill color (semi-transparent)

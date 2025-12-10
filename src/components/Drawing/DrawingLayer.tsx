@@ -10,7 +10,8 @@ interface DrawingLayerProps {
   strokeWidth: number;
   shapes?: DrawingShape[];
   selectedShapeId?: string | null;
-  onShapeComplete: (shape: DrawingShape) => void;
+  selectedVersionId: string;
+  onShapeComplete?: (shape: DrawingShape) => void;
   onShapeSelect?: (shapeId: string | null) => void;
 }
 
@@ -27,6 +28,7 @@ export function DrawingLayer({
   strokeWidth,
   shapes = [],
   selectedShapeId,
+  selectedVersionId,
   onShapeComplete,
   onShapeSelect,
 }: DrawingLayerProps) {
@@ -40,18 +42,11 @@ export function DrawingLayer({
   const getPercentageCoordinates = (e: React.MouseEvent): DrawCoordinates => {
     if (!layerRef.current) return { x: 0, y: 0 };
 
-    // Find the actual image or canvas element (sibling to the drawing layer)
-    const parent = layerRef.current.parentElement;
-    if (!parent) return { x: 0, y: 0 };
+    // Use the drawing layer's own bounding rectangle
+    // (it's positioned to exactly overlay the PDF canvas/image)
+    const rect = layerRef.current.getBoundingClientRect();
 
-    // Look for img (ImageViewer) or canvas (DocumentViewer)
-    const targetElement = parent.querySelector('img') || parent.querySelector('canvas');
-    if (!targetElement) return { x: 0, y: 0 };
-
-    // Use the actual rendered element's bounding rectangle
-    const rect = targetElement.getBoundingClientRect();
-
-    // Calculate relative position within the actual image/canvas
+    // Calculate relative position within the layer
     const x = ((e.clientX - rect.left) / rect.width) * 100;
     const y = ((e.clientY - rect.top) / rect.height) * 100;
 
@@ -125,11 +120,12 @@ export function DrawingLayer({
 
     setIsDrawing(false);
 
-    // Create the shape
+    // Create the shape with versionId
     const shape: DrawingShape = {
       id: crypto.randomUUID(),
       type: shapeType,
       page: pageNumber,
+      versionId: selectedVersionId,
       color: color,
       strokeWidth: strokeWidth,
       bounds: shapeType === 'freehand' ? calculatePathBounds(pathPoints) : {
@@ -142,7 +138,7 @@ export function DrawingLayer({
     };
 
     console.log('✅ Shape completed:', shape);
-    onShapeComplete(shape);
+    onShapeComplete?.(shape);
 
     setStartPos(null);
     setCurrentPos(null);

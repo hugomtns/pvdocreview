@@ -1,5 +1,5 @@
-import { useParams } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useEffect, useState, useMemo } from 'react';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useCommentStore } from '@/stores/commentStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -14,11 +14,15 @@ import { VersionBanner } from '@/components/VersionBanner/VersionBanner';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import type { DocumentVersion, LocationAnchor, WorkflowAction, DocumentStatus, ShapeType, DrawingShape } from '@/types';
 import './DocumentReviewPage.css';
 
 export function DocumentReviewPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { getDocument, updateDocumentStatus, recordWorkflowEvent, loadDocuments } = useDocumentStore();
   const { comments, loading: commentsLoading, loadComments, resolveComment, unresolveComment, addComment } = useCommentStore();
   const currentUser = useAuthStore(state => state.currentUser);
@@ -40,6 +44,16 @@ export function DocumentReviewPage() {
   const [selectedColor, setSelectedColor] = useState('#FF0000');
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
+
+  // Comment deletion state
+  const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
+  const [isDeletingComment, setIsDeletingComment] = useState(false);
+
+  // Filter shapes for the current version only
+  const versionShapes = useMemo(() => {
+    if (!selectedVersionId) return [];
+    return shapes.filter(shape => shape.versionId === selectedVersionId);
+  }, [shapes, selectedVersionId]);
 
   // Initialize selected version to current version
   useEffect(() => {
@@ -86,6 +100,13 @@ export function DocumentReviewPage() {
           .toArray();
         setVersions(allVersions);
 
+        // Load drawings for this version
+        const versionDrawings = await db.drawings
+          .where('versionId')
+          .equals(selectedVersionId)
+          .toArray();
+        setShapes(versionDrawings);
+
         setLoading(false);
 
         // Load comments for this document/version
@@ -123,6 +144,29 @@ export function DocumentReviewPage() {
       await unresolveComment(commentId);
     } catch (err) {
       console.error('Failed to unresolve comment:', err);
+    }
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    setCommentToDelete(commentId);
+  };
+
+  const confirmDeleteComment = async () => {
+    if (!commentToDelete || !selectedVersionId) return;
+
+    setIsDeletingComment(true);
+    try {
+      await db.comments.delete(commentToDelete);
+      setCommentToDelete(null);
+      // Reload comments to reflect the deletion
+      if (id) {
+        await loadComments(id, selectedVersionId);
+      }
+    } catch (err) {
+      console.error('Failed to delete comment:', err);
+      alert('Failed to delete comment. Please try again.');
+    } finally {
+      setIsDeletingComment(false);
     }
   };
 
@@ -184,25 +228,60 @@ export function DocumentReviewPage() {
     setPendingAnnotation(null);
   };
 
-  const handleShapeComplete = (shape: DrawingShape) => {
-    // Save the shape to state (purely visual markup)
-    setShapes(prev => {
-      const updated = [...prev, shape];
-      console.log('Shape saved. Total shapes:', updated.length);
-      return updated;
-    });
+  const handleShapeComplete = async (shape: DrawingShape) => {
+    // Save the shape to database and state
+    try {
+      // Save to IndexedDB
+      await db.drawings.add(shape);
+
+      // Update state
+      setShapes(prev => {
+        const updated = [...prev, shape];
+        console.log('Shape saved to database. Total shapes:', updated.length);
+        return updated;
+      });
+    } catch (err) {
+      console.error('Failed to save drawing:', err);
+    }
   };
 
   const handleShapeSelect = (shapeId: string | null) => {
     setSelectedShapeId(shapeId);
   };
 
-  const handleDeleteShape = () => {
+  const handleDeleteShape = async () => {
     if (!selectedShapeId) return;
 
-    setShapes(prev => prev.filter(shape => shape.id !== selectedShapeId));
-    setSelectedShapeId(null);
-    console.log('Shape deleted:', selectedShapeId);
+    try {
+      // Delete from database
+      await db.drawings.delete(selectedShapeId);
+
+      // Update state
+      setShapes(prev => prev.filter(shape => shape.id !== selectedShapeId));
+      setSelectedShapeId(null);
+      console.log('Shape deleted from database:', selectedShapeId);
+    } catch (err) {
+      console.error('Failed to delete drawing:', err);
+    }
+  };
+
+  const handleClearAllMarkups = async () => {
+    if (shapes.length === 0) return;
+
+    if (window.confirm(`Are you sure you want to clear all ${shapes.length} markup${shapes.length === 1 ? '' : 's'}? This action cannot be undone.`)) {
+      try {
+        // Delete all drawings for current version from database
+        const shapeIds = shapes.map(s => s.id);
+        await db.drawings.bulkDelete(shapeIds);
+
+        // Update state
+        setShapes([]);
+        setSelectedShapeId(null);
+        console.log('All markups cleared from database');
+      } catch (err) {
+        console.error('Failed to clear all markups:', err);
+      }
+    }
   };
 
   const handleToggleDrawingMode = () => {
@@ -366,6 +445,14 @@ export function DocumentReviewPage() {
     <div className="document-review-page">
       <div className="document-review-page__header">
         <div className="document-review-page__header-content">
+          <button
+            className="document-review-page__back-button"
+            onClick={() => navigate('/documents')}
+            aria-label="Back to documents"
+            title="Back to documents"
+          >
+            <ArrowLeft size={20} />
+          </button>
           <h1 className="document-review-page__title">{document.name}</h1>
           <StatusBadge status={document.status} />
           {currentUser && (
@@ -532,6 +619,20 @@ export function DocumentReviewPage() {
                   </button>
                 </>
               )}
+
+              {/* Clear all markups button (shown when there are shapes) */}
+              {shapes.length > 0 && !selectedShapeId && (
+                <>
+                  <div className="document-review-page__toolbar-divider" />
+                  <button
+                    className="document-review-page__annotation-toggle document-review-page__annotation-toggle--destructive"
+                    onClick={handleClearAllMarkups}
+                    title={`Clear all ${shapes.length} markup${shapes.length === 1 ? '' : 's'}`}
+                  >
+                    🗑️ Clear All Markups ({shapes.length})
+                  </button>
+                </>
+              )}
             </div>
           )}
           {version && (
@@ -547,8 +648,9 @@ export function DocumentReviewPage() {
                 drawingShape={selectedShape}
                 drawingColor={selectedColor}
                 drawingStrokeWidth={strokeWidth}
-                shapes={shapes}
+                shapes={versionShapes}
                 selectedShapeId={selectedShapeId}
+                selectedVersionId={selectedVersionId || ''}
                 onShapeComplete={handleShapeComplete}
                 onShapeSelect={handleShapeSelect}
               />
@@ -564,8 +666,9 @@ export function DocumentReviewPage() {
                 drawingShape={selectedShape}
                 drawingColor={selectedColor}
                 drawingStrokeWidth={strokeWidth}
-                shapes={shapes}
+                shapes={versionShapes}
                 selectedShapeId={selectedShapeId}
+                selectedVersionId={selectedVersionId || ''}
                 onShapeComplete={handleShapeComplete}
                 onShapeSelect={handleShapeSelect}
               />
@@ -582,6 +685,7 @@ export function DocumentReviewPage() {
               comments={comments}
               onResolve={handleResolveComment}
               onUnresolve={handleUnresolveComment}
+              onDelete={handleDeleteComment}
               onPinClick={handlePinClick}
               onAddDocumentComment={canComment ? handleAddDocumentComment : undefined}
               activeCommentId={activeCommentId}
@@ -608,6 +712,34 @@ export function DocumentReviewPage() {
           </div>
         </div>
       )}
+
+      {/* Delete comment confirmation dialog */}
+      <Dialog open={!!commentToDelete} onOpenChange={(open) => !open && setCommentToDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Comment</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this comment? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setCommentToDelete(null)}
+              disabled={isDeletingComment}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteComment}
+              disabled={isDeletingComment}
+            >
+              {isDeletingComment ? 'Deleting...' : 'Delete'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

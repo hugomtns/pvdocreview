@@ -14,7 +14,7 @@ const buttonVariants = cva(
         destructive:
           "bg-destructive text-white hover:bg-destructive/90 focus-visible:ring-destructive/20 dark:focus-visible:ring-destructive/40 dark:bg-destructive/60",
         outline:
-          "border bg-background shadow-xs hover:bg-accent hover:text-accent-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
+          "border border-border bg-background shadow-xs hover:bg-muted hover:text-foreground dark:bg-input/30 dark:border-input dark:hover:bg-input/50",
         secondary:
           "bg-secondary text-secondary-foreground hover:bg-secondary/80",
         ghost:
@@ -50,25 +50,32 @@ function Button({
   }) {
   const Comp = asChild ? Slot : "button"
 
-  // Apply primary button styles directly with proper padding
+  // Apply button styles directly with proper padding
   const defaultPadding = size === "sm" ? "4px 8px" : size === "lg" ? "16px 24px" : "8px 16px";
 
-  const primaryStyle = variant === "default" || !variant ? {
-    backgroundColor: '#0d6efd',
-    color: '#ffffff',
-    border: 'none',
-    padding: defaultPadding,
-    ...style
-  } : {
-    padding: defaultPadding,
-    ...style
-  };
+  let buttonStyle = { padding: defaultPadding, ...style };
+
+  if (variant === "default" || !variant) {
+    buttonStyle = {
+      backgroundColor: '#0d6efd',
+      color: '#ffffff',
+      border: 'none',
+      ...buttonStyle
+    };
+  } else if (variant === "destructive") {
+    buttonStyle = {
+      backgroundColor: '#dc3545',
+      color: '#ffffff',
+      border: 'none',
+      ...buttonStyle
+    };
+  }
 
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      style={primaryStyle}
+      style={buttonStyle}
       {...props}
     />
   )

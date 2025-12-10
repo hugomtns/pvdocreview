@@ -5,8 +5,11 @@
 
 /* File input browse button styling */
 [data-slot="input"][type="file"] {
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: 0;
   cursor: pointer;
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 
 [data-slot="input"][type="file"]::file-selector-button {
@@ -19,7 +22,7 @@
   font-size: var(--font-size-sm);
   font-weight: var(--font-weight-medium);
   cursor: pointer;
-  transition: all 150ms ease;
+  transition: all var(--transition-fast);
   line-height: 1.5;
   min-height: 32px;
   display: inline-flex;

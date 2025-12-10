@@ -40,10 +40,41 @@ button:disabled {
   cursor: not-allowed;
 }
 
-/* Focus Styles */
-:focus-visible {
-  outline: 2px solid var(--color-primary);
-  outline-offset: 2px;
+/* Focus Styles - Linear-style subtle focus ring */
+*:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: none;
+  box-shadow: var(--shadow-focus);
+}
+
+/* Typography Hierarchy - Linear-style refinement */
+h1, .text-3xl {
+  font-weight: var(--font-weight-bold);
+  letter-spacing: -0.02em;
+  line-height: var(--line-height-tight);
+}
+
+h2, .text-2xl {
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.015em;
+  line-height: var(--line-height-tight);
+}
+
+h3, .text-xl {
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: -0.01em;
+}
+
+h4, h5, h6 {
+  font-weight: var(--font-weight-medium);
 }
 
 /* Padding Utilities */

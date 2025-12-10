@@ -1,6 +1,7 @@
 /* Button padding standards using CSS variables */
 button[data-slot="button"] {
   padding: var(--spacing-sm) var(--spacing-md) !important;
+  transition: all var(--transition-fast);
 }
 
 button[data-slot="button"][class*="size-sm"] {
@@ -13,4 +14,20 @@ button[data-slot="button"][class*="size-lg"] {
 
 button[data-slot="button"][class*="icon"] {
   padding: var(--spacing-sm) !important;
+}
+
+/* Subtle micro-interactions for Linear-style polish */
+button[data-slot="button"]:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+button[data-slot="button"]:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Destructive button hover state */
+button[data-slot="button"][class*="destructive"]:hover:not(:disabled) {
+  background-color: #bb2d3b !important;
 }

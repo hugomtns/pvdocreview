@@ -3,8 +3,12 @@
   --color-background: #ffffff;
   --color-surface: #f8f9fa;
   --color-surface-hover: #e9ecef;
-  --color-border: #dee2e6;
-  --color-border-strong: #adb5bd;
+
+  /* Borders - Subtle variants for Linear-style softness */
+  --color-border-subtle: rgba(0, 0, 0, 0.04);
+  --color-border-light: rgba(0, 0, 0, 0.06);
+  --color-border: rgba(0, 0, 0, 0.08);
+  --color-border-strong: rgba(0, 0, 0, 0.12);
 
   --color-text-primary: #212529;
   --color-text-secondary: #6c757d;
@@ -22,6 +26,18 @@
   --color-status-changes-requested: #fd7e14;
   --color-status-approved: #198754;
   --color-status-rejected: #dc3545;
+
+  /* Status Badge Colors - Soft backgrounds + dark text (Linear style) */
+  --color-status-draft-bg: #f1f3f5;
+  --color-status-draft-text: #495057;
+  --color-status-in-review-bg: #e7f1ff;
+  --color-status-in-review-text: #0b5ed7;
+  --color-status-changes-requested-bg: #fff3e0;
+  --color-status-changes-requested-text: #c77700;
+  --color-status-approved-bg: #d1f4e0;
+  --color-status-approved-text: #146c43;
+  --color-status-rejected-bg: #ffe5e8;
+  --color-status-rejected-text: #c41e3a;
 
   /* Colors - Semantic */
   --color-success: #198754;
@@ -44,6 +60,14 @@
   --color-role-viewer: #6c757d;
   --color-role-reviewer: #0d6efd;
   --color-role-admin: #6610f2;
+
+  /* Role Badge Colors - Soft backgrounds + dark text (Linear style) */
+  --color-role-viewer-bg: #f1f3f5;
+  --color-role-viewer-text: #495057;
+  --color-role-reviewer-bg: #e7f1ff;
+  --color-role-reviewer-text: #0b5ed7;
+  --color-role-admin-bg: #f3e8ff;
+  --color-role-admin-text: #5a1fa0;
 
   /* Spacing Scale */
   --spacing-xs: 0.25rem;   /* 4px */
@@ -74,7 +98,7 @@
   --font-weight-bold: 700;
 
   --line-height-tight: 1.25;
-  --line-height-normal: 1.5;
+  --line-height-normal: 1.6;
   --line-height-relaxed: 1.75;
 
   /* Border Radius */
@@ -84,11 +108,16 @@
   --radius-xl: 0.75rem;   /* 12px */
   --radius-full: 9999px;
 
-  /* Shadows */
-  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  /* Shadows - Ultra-subtle like Linear App (2-4% opacity) */
+  --shadow-subtle: 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  --shadow-sm: 0 1px 3px 0 rgba(0, 0, 0, 0.03), 0 1px 2px 0 rgba(0, 0, 0, 0.02);
+  --shadow-md: 0 4px 6px -2px rgba(0, 0, 0, 0.04), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.06), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+
+  /* Interactive shadows */
+  --shadow-hover: 0 8px 16px -4px rgba(0, 0, 0, 0.06), 0 4px 8px -2px rgba(0, 0, 0, 0.04);
+  --shadow-focus: 0 0 0 3px rgba(13, 110, 253, 0.12);
 
   /* Z-Index Scale */
   --z-base: 1;
@@ -99,10 +128,10 @@
   --z-popover: 1400;
   --z-tooltip: 1500;
 
-  /* Transitions */
-  --transition-fast: 150ms ease;
-  --transition-base: 200ms ease;
-  --transition-slow: 300ms ease;
+  /* Transitions - Smooth cubic-bezier for Linear-style polish */
+  --transition-fast: 150ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-base: 200ms cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: 300ms cubic-bezier(0.4, 0, 0.2, 1);
 
   /* Layout */
   --header-height: 4rem;

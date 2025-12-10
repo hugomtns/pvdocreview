@@ -69,8 +69,8 @@ export function PageRenderer({
           onLoadError={handleLoadError}
           loading={null}
           error={null}
-          renderTextLayer={true}
-          renderAnnotationLayer={true}
+          renderTextLayer={false}
+          renderAnnotationLayer={false}
         />
       </Document>
     </div>

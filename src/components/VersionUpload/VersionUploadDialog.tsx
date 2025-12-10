@@ -113,6 +113,11 @@ export function VersionUploadDialog({ documentId, documentName, onVersionUploade
 
       // Create new version
       const now = new Date();
+
+      console.log('Creating version with currentUser:', currentUser);
+      console.log('uploadedBy will be:', currentUser.name);
+      console.log('uploaderRole will be:', currentUser.role);
+
       const newVersion: DocumentVersion = {
         id: crypto.randomUUID(),
         documentId,
@@ -122,9 +127,12 @@ export function VersionUploadDialog({ documentId, documentName, onVersionUploade
         originalFile,
         pdfFile,
         uploadedBy: currentUser.name,
+        uploaderRole: currentUser.role,
         uploadedAt: now,
         pageCount,
       };
+
+      console.log('Created newVersion:', newVersion);
 
       // Save version to database
       await db.versions.add(newVersion);
