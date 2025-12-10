@@ -50,25 +50,32 @@ function Button({
   }) {
   const Comp = asChild ? Slot : "button"
 
-  // Apply primary button styles directly with proper padding
+  // Apply button styles directly with proper padding
   const defaultPadding = size === "sm" ? "4px 8px" : size === "lg" ? "16px 24px" : "8px 16px";
 
-  const primaryStyle = variant === "default" || !variant ? {
-    backgroundColor: '#0d6efd',
-    color: '#ffffff',
-    border: 'none',
-    padding: defaultPadding,
-    ...style
-  } : {
-    padding: defaultPadding,
-    ...style
-  };
+  let buttonStyle = { padding: defaultPadding, ...style };
+
+  if (variant === "default" || !variant) {
+    buttonStyle = {
+      backgroundColor: '#0d6efd',
+      color: '#ffffff',
+      border: 'none',
+      ...buttonStyle
+    };
+  } else if (variant === "destructive") {
+    buttonStyle = {
+      backgroundColor: '#dc3545',
+      color: '#ffffff',
+      border: 'none',
+      ...buttonStyle
+    };
+  }
 
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      style={primaryStyle}
+      style={buttonStyle}
       {...props}
     />
   )
