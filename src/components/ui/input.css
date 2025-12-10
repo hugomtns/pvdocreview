@@ -5,8 +5,11 @@
 
 /* File input browse button styling */
 [data-slot="input"][type="file"] {
-  padding: var(--spacing-xs) var(--spacing-sm);
+  padding: 0;
   cursor: pointer;
+  border: none;
+  background: transparent;
+  box-shadow: none;
 }
 
 [data-slot="input"][type="file"]::file-selector-button {

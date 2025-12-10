@@ -1,84 +1,48 @@
-.version-history {
-  padding: var(--spacing-md);
-}
-
-.version-history__loading,
-.version-history__empty {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: var(--spacing-2xl);
-  color: var(--color-text-muted);
-  font-size: var(--font-size-sm);
-  font-style: italic;
-}
-
-.version-history__error {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: var(--spacing-2xl);
-  color: var(--color-error);
-  background-color: var(--color-error-light);
-  border: 1px solid var(--color-error);
-  border-radius: var(--radius-md);
-}
-
-.version-history__error p {
-  margin: 0;
-  font-size: var(--font-size-sm);
-}
-
-.version-history__list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--spacing-sm);
-}
-
-.version-history__item {
+.version-card {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-xs);
   padding: var(--spacing-sm);
-  background-color: var(--color-surface) !important;
+  background-color: var(--color-surface);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   cursor: pointer;
   transition: all var(--transition-fast);
   text-align: left;
   width: 100%;
-  color: inherit;
 }
 
-.version-history__item:hover {
+.version-card:hover {
   background-color: var(--color-surface-hover);
   border-color: var(--color-primary);
+  transform: translateY(-1px);
 }
 
-.version-history__item--selected {
-  background-color: var(--color-background) !important;
+.version-card:active {
+  transform: translateY(0);
+}
+
+.version-card--selected {
+  background-color: var(--color-background);
   border-color: var(--color-primary);
   border-width: 2px;
   box-shadow: var(--shadow-sm);
 }
 
-.version-history__item-header {
+.version-card__header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: var(--spacing-xs);
 }
 
-.version-history__version-number {
+.version-card__version-number {
   font-size: var(--font-size-base);
   font-weight: var(--font-weight-semibold);
   color: var(--color-text-primary);
 }
 
-.version-history__current-badge {
+.version-card__current-badge {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
   color: var(--color-success);
@@ -87,23 +51,56 @@
   border-radius: var(--radius-sm);
 }
 
-.version-history__item-details {
+.version-card__details {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
 
-.version-history__uploader {
+.version-card__uploader {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-xs);
+  flex-wrap: wrap;
+}
+
+.version-card__uploader-name {
   font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
   color: var(--color-text-secondary);
 }
 
-.version-history__date {
+.version-card__role-badge {
+  display: inline-block;
+  padding: 2px var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: capitalize;
+  letter-spacing: 0.01em;
+}
+
+.version-card__role-badge--viewer {
+  background-color: var(--color-role-viewer-bg);
+  color: var(--color-role-viewer-text);
+}
+
+.version-card__role-badge--reviewer {
+  background-color: var(--color-role-reviewer-bg);
+  color: var(--color-role-reviewer-text);
+}
+
+.version-card__role-badge--admin {
+  background-color: var(--color-role-admin-bg);
+  color: var(--color-role-admin-text);
+}
+
+.version-card__date {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
 }
 
-.version-history__item-meta {
+.version-card__meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -113,7 +110,7 @@
   border-top: 1px solid var(--color-border);
 }
 
-.version-history__filename {
+.version-card__filename {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
   overflow: hidden;
@@ -122,20 +119,20 @@
   flex: 1;
 }
 
-.version-history__pages {
+.version-card__pages {
   font-size: var(--font-size-xs);
   color: var(--color-text-muted);
   white-space: nowrap;
 }
 
-/* Touch-friendly version buttons on mobile */
+/* Touch-friendly on mobile */
 @media (max-width: 768px) {
-  .version-history__item {
+  .version-card {
     min-height: 80px;
     padding: var(--spacing-md);
   }
 
-  .version-history__version-number {
+  .version-card__version-number {
     font-size: var(--font-size-lg);
   }
 }

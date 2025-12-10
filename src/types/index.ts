@@ -23,7 +23,8 @@ export interface DocumentVersion {
   fileType: 'pdf' | 'image' | 'docx';
   originalFile: Blob;           // Original uploaded file
   pdfFile: Blob;                // PDF for viewing (same as original if PDF/image)
-  uploadedBy: string;           // User ID
+  uploadedBy: string;           // User name
+  uploaderRole: UserRole;       // User role
   uploadedAt: Date;
   pageCount: number;
 }

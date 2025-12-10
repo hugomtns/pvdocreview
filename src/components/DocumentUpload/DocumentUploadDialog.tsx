@@ -102,7 +102,8 @@ export function DocumentUploadDialog({ children }: DocumentUploadDialogProps) {
         fileType,
         originalFile,
         pdfFile,
-        uploadedBy: currentUser.id,
+        uploadedBy: currentUser.name,
+        uploaderRole: currentUser.role,
         uploadedAt: new Date(),
         pageCount: 1, // Placeholder - will be calculated by PDF viewer
       };
