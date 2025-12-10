@@ -246,8 +246,8 @@ export function DocumentViewer({
                 <Page
                   pageNumber={index + 1}
                   width={getPageWidth()}
-                  renderTextLayer={true}
-                  renderAnnotationLayer={true}
+                  renderTextLayer={false}
+                  renderAnnotationLayer={false}
                   loading={
                     <div className="document-viewer__page-loading">
                       Loading page {index + 1}...

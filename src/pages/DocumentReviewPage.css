@@ -20,6 +20,32 @@
   margin: 0 auto;
 }
 
+.document-review-page__back-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.document-review-page__back-button:hover {
+  background-color: var(--color-surface-hover);
+  border-color: var(--color-primary);
+  color: var(--color-primary);
+  transform: translateY(-1px);
+}
+
+.document-review-page__back-button:active {
+  transform: translateY(0);
+}
+
 .document-review-page__title {
   font-size: var(--font-size-xl);
   font-weight: var(--font-weight-bold);

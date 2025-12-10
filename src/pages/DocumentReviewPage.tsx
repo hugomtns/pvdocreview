@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useCommentStore } from '@/stores/commentStore';
@@ -16,11 +16,13 @@ import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
 import type { DocumentVersion, LocationAnchor, WorkflowAction, DocumentStatus, ShapeType, DrawingShape } from '@/types';
 import './DocumentReviewPage.css';
 
 export function DocumentReviewPage() {
   const { id } = useParams<{ id: string }>();
+  const navigate = useNavigate();
   const { getDocument, updateDocumentStatus, recordWorkflowEvent, loadDocuments } = useDocumentStore();
   const { comments, loading: commentsLoading, loadComments, resolveComment, unresolveComment, addComment } = useCommentStore();
   const currentUser = useAuthStore(state => state.currentUser);
@@ -405,6 +407,14 @@ export function DocumentReviewPage() {
     <div className="document-review-page">
       <div className="document-review-page__header">
         <div className="document-review-page__header-content">
+          <button
+            className="document-review-page__back-button"
+            onClick={() => navigate('/documents')}
+            aria-label="Back to documents"
+            title="Back to documents"
+          >
+            <ArrowLeft size={20} />
+          </button>
           <h1 className="document-review-page__title">{document.name}</h1>
           <StatusBadge status={document.status} />
           {currentUser && (
