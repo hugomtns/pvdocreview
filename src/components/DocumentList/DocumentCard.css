@@ -28,6 +28,38 @@
   color: var(--color-text-primary);
   margin: 0;
   word-break: break-word;
+  flex: 1;
+}
+
+.document-card__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.document-card__delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.document-card__delete-button:hover {
+  background-color: var(--color-error-light);
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.document-card__delete-button:active {
+  transform: scale(0.95);
 }
 
 .document-card__meta {

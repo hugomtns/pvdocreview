@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatusBadge } from '@/components/StatusBadge/StatusBadge';
@@ -5,6 +6,9 @@ import { useAuthStore } from '@/stores/authStore';
 import type { Document, Comment } from '@/types';
 import { db } from '@/lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
+import { Trash2 } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import './DocumentCard.css';
 
 interface DocumentCardProps {
@@ -14,6 +18,8 @@ interface DocumentCardProps {
 export function DocumentCard({ document }: DocumentCardProps) {
   const navigate = useNavigate();
   const currentUser = useAuthStore(state => state.currentUser);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   // Count versions for this document
   const versionCount = useLiveQuery(
@@ -52,6 +58,38 @@ export function DocumentCard({ document }: DocumentCardProps) {
     navigate(`/documents/${document.id}`);
   };
 
+  const handleDeleteClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setShowDeleteDialog(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    setIsDeleting(true);
+    try {
+      // Delete all associated data
+      await db.transaction('rw', [db.documents, db.versions, db.comments, db.markups], async () => {
+        // Delete all markups for this document
+        await db.markups.where('documentId').equals(document.id).delete();
+
+        // Delete all comments for this document
+        await db.comments.where('documentId').equals(document.id).delete();
+
+        // Delete all versions for this document
+        await db.versions.where('documentId').equals(document.id).delete();
+
+        // Delete the document itself
+        await db.documents.delete(document.id);
+      });
+
+      setShowDeleteDialog(false);
+    } catch (error) {
+      console.error('Error deleting document:', error);
+      alert('Failed to delete document. Please try again.');
+    } finally {
+      setIsDeleting(false);
+    }
+  };
+
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString('en-US', {
       month: 'short',
@@ -61,36 +99,77 @@ export function DocumentCard({ document }: DocumentCardProps) {
   };
 
   return (
-    <Card className="document-card" onClick={handleClick}>
-      <CardHeader className="document-card__header">
-        <div className="document-card__title-row">
-          <CardTitle className="document-card__title">{document.name}</CardTitle>
-          <StatusBadge status={document.status} />
-        </div>
-        <CardDescription className="document-card__meta">
-          <span>{versionCount} {versionCount === 1 ? 'version' : 'versions'}</span>
-          {unresolvedCount > 0 && (
-            <>
-              <span className="document-card__meta-separator">•</span>
-              <span className="document-card__unresolved-count">
-                {unresolvedCount} unresolved
-              </span>
-            </>
-          )}
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="document-card__content">
-        <div className="document-card__dates">
-          <div className="document-card__date">
-            <span className="document-card__date-label">Created:</span>
-            <span className="document-card__date-value">{formatDate(document.createdAt)}</span>
+    <>
+      <Card className="document-card" onClick={handleClick}>
+        <CardHeader className="document-card__header">
+          <div className="document-card__title-row">
+            <CardTitle className="document-card__title">{document.name}</CardTitle>
+            <div className="document-card__actions">
+              <StatusBadge status={document.status} />
+              {currentUser?.role === 'admin' && (
+                <button
+                  onClick={handleDeleteClick}
+                  className="document-card__delete-button"
+                  aria-label="Delete document"
+                  title="Delete document"
+                >
+                  <Trash2 size={16} />
+                </button>
+              )}
+            </div>
           </div>
-          <div className="document-card__date">
-            <span className="document-card__date-label">Updated:</span>
-            <span className="document-card__date-value">{formatDate(document.updatedAt)}</span>
+          <CardDescription className="document-card__meta">
+            <span>{versionCount} {versionCount === 1 ? 'version' : 'versions'}</span>
+            {unresolvedCount > 0 && (
+              <>
+                <span className="document-card__meta-separator">•</span>
+                <span className="document-card__unresolved-count">
+                  {unresolvedCount} unresolved
+                </span>
+              </>
+            )}
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="document-card__content">
+          <div className="document-card__dates">
+            <div className="document-card__date">
+              <span className="document-card__date-label">Created:</span>
+              <span className="document-card__date-value">{formatDate(document.createdAt)}</span>
+            </div>
+            <div className="document-card__date">
+              <span className="document-card__date-label">Updated:</span>
+              <span className="document-card__date-value">{formatDate(document.updatedAt)}</span>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      <Dialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Document</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete "{document.name}"? This will permanently delete the document and all associated versions, comments, and markups. This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setShowDeleteDialog(false)}
+              disabled={isDeleting}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleDeleteConfirm}
+              disabled={isDeleting}
+            >
+              {isDeleting ? 'Deleting...' : 'Delete'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }
