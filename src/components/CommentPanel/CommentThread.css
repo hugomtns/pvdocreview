@@ -137,6 +137,13 @@
   color: var(--color-text-muted);
 }
 
+.comment-thread__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  flex-wrap: wrap;
+}
+
 .comment-thread__resolved-badge {
   font-size: var(--font-size-xs);
   font-weight: var(--font-weight-medium);
@@ -173,6 +180,31 @@
   border-radius: var(--radius-sm);
   cursor: pointer;
   transition: all var(--transition-fast);
+}
+
+.comment-thread__delete-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  background-color: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+}
+
+.comment-thread__delete-button:hover {
+  background-color: var(--color-error-light);
+  border-color: var(--color-error);
+  color: var(--color-error);
+}
+
+.comment-thread__delete-button:active {
+  transform: scale(0.95);
 }
 
 .comment-thread__unresolve-button:hover {

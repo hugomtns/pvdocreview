@@ -14,6 +14,8 @@ import { VersionBanner } from '@/components/VersionBanner/VersionBanner';
 import { db } from '@/lib/db';
 import { DocumentViewer } from '@/components/DocumentViewer/DocumentViewer';
 import { ImageViewer } from '@/components/DocumentViewer/ImageViewer';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import type { DocumentVersion, LocationAnchor, WorkflowAction, DocumentStatus, ShapeType, DrawingShape } from '@/types';
 import './DocumentReviewPage.css';
 
@@ -40,6 +42,10 @@ export function DocumentReviewPage() {
   const [selectedColor, setSelectedColor] = useState('#FF0000');
   const [strokeWidth, setStrokeWidth] = useState(4);
   const [selectedShapeId, setSelectedShapeId] = useState<string | null>(null);
+
+  // Comment deletion state
+  const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
+  const [isDeletingComment, setIsDeletingComment] = useState(false);
 
   // Initialize selected version to current version
   useEffect(() => {
@@ -123,6 +129,29 @@ export function DocumentReviewPage() {
       await unresolveComment(commentId);
     } catch (err) {
       console.error('Failed to unresolve comment:', err);
+    }
+  };
+
+  const handleDeleteComment = (commentId: string) => {
+    setCommentToDelete(commentId);
+  };
+
+  const confirmDeleteComment = async () => {
+    if (!commentToDelete) return;
+
+    setIsDeletingComment(true);
+    try {
+      await db.comments.delete(commentToDelete);
+      setCommentToDelete(null);
+      // Reload comments to reflect the deletion
+      if (id) {
+        await loadComments(id);
+      }
+    } catch (err) {
+      console.error('Failed to delete comment:', err);
+      alert('Failed to delete comment. Please try again.');
+    } finally {
+      setIsDeletingComment(false);
     }
   };
 
@@ -582,6 +611,7 @@ export function DocumentReviewPage() {
               comments={comments}
               onResolve={handleResolveComment}
               onUnresolve={handleUnresolveComment}
+              onDelete={handleDeleteComment}
               onPinClick={handlePinClick}
               onAddDocumentComment={canComment ? handleAddDocumentComment : undefined}
               activeCommentId={activeCommentId}
@@ -608,6 +638,34 @@ export function DocumentReviewPage() {
           </div>
         </div>
       )}
+
+      {/* Delete comment confirmation dialog */}
+      <Dialog open={!!commentToDelete} onOpenChange={(open) => !open && setCommentToDelete(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Comment</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete this comment? This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setCommentToDelete(null)}
+              disabled={isDeletingComment}
+            >
+              Cancel
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={confirmDeleteComment}
+              disabled={isDeletingComment}
+            >
+              {isDeletingComment ? 'Deleting...' : 'Delete'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
