@@ -39,6 +39,7 @@ interface DocumentViewerProps {
   drawingStrokeWidth?: number;
   shapes?: DrawingShape[];
   selectedShapeId?: string | null;
+  selectedVersionId?: string;
   onShapeComplete?: (shape: DrawingShape) => void;
   onShapeSelect?: (shapeId: string | null) => void;
 }
@@ -58,6 +59,7 @@ export function DocumentViewer({
   drawingStrokeWidth = 4,
   shapes = [],
   selectedShapeId,
+  selectedVersionId = '',
   onShapeComplete,
   onShapeSelect,
 }: DocumentViewerProps) {
@@ -263,7 +265,7 @@ export function DocumentViewer({
                     activeCommentId={activeCommentId}
                   />
                 )}
-                {(shapes.length > 0 || drawingEnabled) && onShapeComplete && (
+                {(shapes.length > 0 || drawingEnabled) && (
                   <DrawingLayer
                     pageNumber={index + 1}
                     enabled={drawingEnabled}
@@ -272,6 +274,7 @@ export function DocumentViewer({
                     strokeWidth={drawingStrokeWidth}
                     shapes={shapes}
                     selectedShapeId={selectedShapeId}
+                    selectedVersionId={selectedVersionId}
                     onShapeComplete={onShapeComplete}
                     onShapeSelect={onShapeSelect}
                   />

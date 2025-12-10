@@ -1,5 +1,5 @@
 import { useParams, useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useDocumentStore } from '@/stores/documentStore';
 import { useCommentStore } from '@/stores/commentStore';
 import { useAuthStore } from '@/stores/authStore';
@@ -49,6 +49,12 @@ export function DocumentReviewPage() {
   const [commentToDelete, setCommentToDelete] = useState<string | null>(null);
   const [isDeletingComment, setIsDeletingComment] = useState(false);
 
+  // Filter shapes for the current version only
+  const versionShapes = useMemo(() => {
+    if (!selectedVersionId) return [];
+    return shapes.filter(shape => shape.versionId === selectedVersionId);
+  }, [shapes, selectedVersionId]);
+
   // Initialize selected version to current version
   useEffect(() => {
     if (!id) return;
@@ -93,6 +99,13 @@ export function DocumentReviewPage() {
           .equals(id)
           .toArray();
         setVersions(allVersions);
+
+        // Load drawings for this version
+        const versionDrawings = await db.drawings
+          .where('versionId')
+          .equals(selectedVersionId)
+          .toArray();
+        setShapes(versionDrawings);
 
         setLoading(false);
 
@@ -139,7 +152,7 @@ export function DocumentReviewPage() {
   };
 
   const confirmDeleteComment = async () => {
-    if (!commentToDelete) return;
+    if (!commentToDelete || !selectedVersionId) return;
 
     setIsDeletingComment(true);
     try {
@@ -147,7 +160,7 @@ export function DocumentReviewPage() {
       setCommentToDelete(null);
       // Reload comments to reflect the deletion
       if (id) {
-        await loadComments(id);
+        await loadComments(id, selectedVersionId);
       }
     } catch (err) {
       console.error('Failed to delete comment:', err);
@@ -215,34 +228,59 @@ export function DocumentReviewPage() {
     setPendingAnnotation(null);
   };
 
-  const handleShapeComplete = (shape: DrawingShape) => {
-    // Save the shape to state (purely visual markup)
-    setShapes(prev => {
-      const updated = [...prev, shape];
-      console.log('Shape saved. Total shapes:', updated.length);
-      return updated;
-    });
+  const handleShapeComplete = async (shape: DrawingShape) => {
+    // Save the shape to database and state
+    try {
+      // Save to IndexedDB
+      await db.drawings.add(shape);
+
+      // Update state
+      setShapes(prev => {
+        const updated = [...prev, shape];
+        console.log('Shape saved to database. Total shapes:', updated.length);
+        return updated;
+      });
+    } catch (err) {
+      console.error('Failed to save drawing:', err);
+    }
   };
 
   const handleShapeSelect = (shapeId: string | null) => {
     setSelectedShapeId(shapeId);
   };
 
-  const handleDeleteShape = () => {
+  const handleDeleteShape = async () => {
     if (!selectedShapeId) return;
 
-    setShapes(prev => prev.filter(shape => shape.id !== selectedShapeId));
-    setSelectedShapeId(null);
-    console.log('Shape deleted:', selectedShapeId);
+    try {
+      // Delete from database
+      await db.drawings.delete(selectedShapeId);
+
+      // Update state
+      setShapes(prev => prev.filter(shape => shape.id !== selectedShapeId));
+      setSelectedShapeId(null);
+      console.log('Shape deleted from database:', selectedShapeId);
+    } catch (err) {
+      console.error('Failed to delete drawing:', err);
+    }
   };
 
-  const handleClearAllMarkups = () => {
+  const handleClearAllMarkups = async () => {
     if (shapes.length === 0) return;
 
     if (window.confirm(`Are you sure you want to clear all ${shapes.length} markup${shapes.length === 1 ? '' : 's'}? This action cannot be undone.`)) {
-      setShapes([]);
-      setSelectedShapeId(null);
-      console.log('All markups cleared');
+      try {
+        // Delete all drawings for current version from database
+        const shapeIds = shapes.map(s => s.id);
+        await db.drawings.bulkDelete(shapeIds);
+
+        // Update state
+        setShapes([]);
+        setSelectedShapeId(null);
+        console.log('All markups cleared from database');
+      } catch (err) {
+        console.error('Failed to clear all markups:', err);
+      }
     }
   };
 
@@ -610,8 +648,9 @@ export function DocumentReviewPage() {
                 drawingShape={selectedShape}
                 drawingColor={selectedColor}
                 drawingStrokeWidth={strokeWidth}
-                shapes={shapes}
+                shapes={versionShapes}
                 selectedShapeId={selectedShapeId}
+                selectedVersionId={selectedVersionId || ''}
                 onShapeComplete={handleShapeComplete}
                 onShapeSelect={handleShapeSelect}
               />
@@ -627,8 +666,9 @@ export function DocumentReviewPage() {
                 drawingShape={selectedShape}
                 drawingColor={selectedColor}
                 drawingStrokeWidth={strokeWidth}
-                shapes={shapes}
+                shapes={versionShapes}
                 selectedShapeId={selectedShapeId}
+                selectedVersionId={selectedVersionId || ''}
                 onShapeComplete={handleShapeComplete}
                 onShapeSelect={handleShapeSelect}
               />

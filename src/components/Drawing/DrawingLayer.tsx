@@ -10,7 +10,8 @@ interface DrawingLayerProps {
   strokeWidth: number;
   shapes?: DrawingShape[];
   selectedShapeId?: string | null;
-  onShapeComplete: (shape: DrawingShape) => void;
+  selectedVersionId: string;
+  onShapeComplete?: (shape: DrawingShape) => void;
   onShapeSelect?: (shapeId: string | null) => void;
 }
 
@@ -27,6 +28,7 @@ export function DrawingLayer({
   strokeWidth,
   shapes = [],
   selectedShapeId,
+  selectedVersionId,
   onShapeComplete,
   onShapeSelect,
 }: DrawingLayerProps) {
@@ -118,11 +120,12 @@ export function DrawingLayer({
 
     setIsDrawing(false);
 
-    // Create the shape
+    // Create the shape with versionId
     const shape: DrawingShape = {
       id: crypto.randomUUID(),
       type: shapeType,
       page: pageNumber,
+      versionId: selectedVersionId,
       color: color,
       strokeWidth: strokeWidth,
       bounds: shapeType === 'freehand' ? calculatePathBounds(pathPoints) : {
@@ -135,7 +138,7 @@ export function DrawingLayer({
     };
 
     console.log('✅ Shape completed:', shape);
-    onShapeComplete(shape);
+    onShapeComplete?.(shape);
 
     setStartPos(null);
     setCurrentPos(null);

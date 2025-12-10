@@ -1,5 +1,5 @@
 import Dexie, { type Table } from 'dexie';
-import type { Document, DocumentVersion, Comment, WorkflowEvent } from '@/types';
+import type { Document, DocumentVersion, Comment, WorkflowEvent, DrawingShape } from '@/types';
 
 export class PVDocReviewDatabase extends Dexie {
   // Tables
@@ -7,6 +7,7 @@ export class PVDocReviewDatabase extends Dexie {
   versions!: Table<DocumentVersion, string>;
   comments!: Table<Comment, string>;
   workflowEvents!: Table<WorkflowEvent, string>;
+  drawings!: Table<DrawingShape, string>;
 
   constructor() {
     super('PVDocReviewDB');
@@ -88,6 +89,15 @@ export class PVDocReviewDatabase extends Dexie {
           version.uploaderRole = 'admin';
         }
       });
+    });
+
+    // Version 5: Add drawings table for persistent drawing storage
+    this.version(5).stores({
+      documents: 'id, status, createdBy, createdAt',
+      versions: 'id, documentId, versionNumber, uploadedAt, uploaderRole',
+      comments: 'id, documentId, versionId, authorId, createdAt, isPrivate',
+      workflowEvents: 'id, documentId, createdAt',
+      drawings: 'id, versionId, page'
     });
   }
 }

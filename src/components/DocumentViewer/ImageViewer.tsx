@@ -35,6 +35,7 @@ interface ImageViewerProps {
   drawingStrokeWidth?: number;
   shapes?: DrawingShape[];
   selectedShapeId?: string | null;
+  selectedVersionId?: string;
   onShapeComplete?: (shape: DrawingShape) => void;
   onShapeSelect?: (shapeId: string | null) => void;
 }
@@ -54,6 +55,7 @@ export function ImageViewer({
   drawingStrokeWidth = 4,
   shapes = [],
   selectedShapeId,
+  selectedVersionId = '',
   onShapeComplete,
   onShapeSelect,
 }: ImageViewerProps) {
@@ -223,7 +225,7 @@ export function ImageViewer({
                   activeCommentId={activeCommentId}
                 />
               )}
-              {(shapes.length > 0 || drawingEnabled) && onShapeComplete && (
+              {(shapes.length > 0 || drawingEnabled) && (
                 <DrawingLayer
                   pageNumber={1}
                   enabled={drawingEnabled}
@@ -232,6 +234,7 @@ export function ImageViewer({
                   strokeWidth={drawingStrokeWidth}
                   shapes={shapes}
                   selectedShapeId={selectedShapeId}
+                  selectedVersionId={selectedVersionId}
                   onShapeComplete={onShapeComplete}
                   onShapeSelect={onShapeSelect}
                 />

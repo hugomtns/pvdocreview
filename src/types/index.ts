@@ -59,6 +59,7 @@ export interface DrawingShape {
   id: string;
   type: ShapeType;
   page: number;
+  versionId: string;            // Version this drawing belongs to
   color: string;                // Hex color code (e.g., '#FF0000')
   strokeWidth: number;          // 1-5px
   fill?: string;                // Optional fill color (semi-transparent)
