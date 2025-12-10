@@ -114,38 +114,11 @@ export function DocumentCard({ document }: DocumentCardProps) {
               {currentUser?.role === 'admin' && (
                 <button
                   onClick={handleDeleteClick}
+                  className="document-card__delete-button"
                   aria-label="Delete document"
                   title="Delete document"
-                  style={{
-                    all: 'unset',
-                    backgroundColor: 'transparent',
-                    border: '1px solid #dc3545',
-                    color: '#dc3545',
-                    width: '32px',
-                    height: '32px',
-                    padding: '0',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    borderRadius: '0.25rem',
-                    cursor: 'pointer',
-                    transition: 'all 0.15s ease',
-                    boxSizing: 'border-box'
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.backgroundColor = '#dc3545';
-                    e.currentTarget.style.color = 'white';
-                    const svg = e.currentTarget.querySelector('svg');
-                    if (svg) svg.style.stroke = 'white';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.backgroundColor = 'transparent';
-                    e.currentTarget.style.color = '#dc3545';
-                    const svg = e.currentTarget.querySelector('svg');
-                    if (svg) svg.style.stroke = '#dc3545';
-                  }}
                 >
-                  <Trash2 size={16} style={{ stroke: '#dc3545', width: '16px', height: '16px' }} />
+                  <Trash2 size={16} />
                 </button>
               )}
             </div>
