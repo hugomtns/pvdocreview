@@ -69,7 +69,7 @@ export function DocumentCard({ document }: DocumentCardProps) {
     setIsDeleting(true);
     try {
       // Delete all associated data
-      await db.transaction('rw', [db.documents, db.versions, db.comments, db.markups], async () => {
+      await db.transaction('rw', ['documents', 'versions', 'comments', 'markups'], async () => {
         // Delete all markups for this document
         await db.markups.where('documentId').equals(document.id).delete();
 
