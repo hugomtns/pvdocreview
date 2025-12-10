@@ -117,6 +117,28 @@ export function DocumentCard({ document }: DocumentCardProps) {
                   className="document-card__delete-button"
                   aria-label="Delete document"
                   title="Delete document"
+                  style={{
+                    backgroundColor: 'transparent',
+                    border: '1px solid #dc3545',
+                    color: '#dc3545',
+                    width: '32px',
+                    height: '32px',
+                    padding: '0',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    borderRadius: '0.25rem',
+                    cursor: 'pointer',
+                    transition: 'all 0.15s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.backgroundColor = '#dc3545';
+                    e.currentTarget.style.color = 'white';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.backgroundColor = 'transparent';
+                    e.currentTarget.style.color = '#dc3545';
+                  }}
                 >
                   <Trash2 size={16} />
                 </button>
