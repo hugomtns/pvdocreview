@@ -234,6 +234,16 @@ export function DocumentReviewPage() {
     console.log('Shape deleted:', selectedShapeId);
   };
 
+  const handleClearAllMarkups = () => {
+    if (shapes.length === 0) return;
+
+    if (window.confirm(`Are you sure you want to clear all ${shapes.length} markup${shapes.length === 1 ? '' : 's'}? This action cannot be undone.`)) {
+      setShapes([]);
+      setSelectedShapeId(null);
+      console.log('All markups cleared');
+    }
+  };
+
   const handleToggleDrawingMode = () => {
     const newDrawingMode = !drawingMode;
     setDrawingMode(newDrawingMode);
@@ -558,6 +568,20 @@ export function DocumentReviewPage() {
                     title="Delete selected shape (Delete key)"
                   >
                     🗑️ Delete Shape
+                  </button>
+                </>
+              )}
+
+              {/* Clear all markups button (shown when there are shapes) */}
+              {shapes.length > 0 && !selectedShapeId && (
+                <>
+                  <div className="document-review-page__toolbar-divider" />
+                  <button
+                    className="document-review-page__annotation-toggle document-review-page__annotation-toggle--destructive"
+                    onClick={handleClearAllMarkups}
+                    title={`Clear all ${shapes.length} markup${shapes.length === 1 ? '' : 's'}`}
+                  >
+                    🗑️ Clear All Markups ({shapes.length})
                   </button>
                 </>
               )}
