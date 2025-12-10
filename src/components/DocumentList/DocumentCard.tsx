@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { StatusBadge } from '@/components/StatusBadge/StatusBadge';
 import { useAuthStore } from '@/stores/authStore';
+import { useDocumentStore } from '@/stores/documentStore';
 import type { Document, Comment } from '@/types';
 import { db } from '@/lib/db';
 import { useLiveQuery } from 'dexie-react-hooks';
@@ -18,6 +19,7 @@ interface DocumentCardProps {
 export function DocumentCard({ document }: DocumentCardProps) {
   const navigate = useNavigate();
   const currentUser = useAuthStore(state => state.currentUser);
+  const { loadDocuments } = useDocumentStore();
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
 
@@ -82,6 +84,9 @@ export function DocumentCard({ document }: DocumentCardProps) {
       });
 
       setShowDeleteDialog(false);
+
+      // Reload documents to refresh the list
+      await loadDocuments();
     } catch (error) {
       console.error('Error deleting document:', error);
       alert('Failed to delete document. Please try again.');
