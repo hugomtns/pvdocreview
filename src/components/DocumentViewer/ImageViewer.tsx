@@ -120,23 +120,28 @@ export function ImageViewer({
     // Get the pin position as percentage of image dimensions
     const { x, y } = activeComment.anchor;
 
-    // Get the image's rendered (displayed) dimensions
-    const imgRect = imgRef.current.getBoundingClientRect();
-    const imgWidth = imgRect.width;
-    const imgHeight = imgRect.height;
-
-    // Calculate absolute position on the image using displayed dimensions
-    const pinX = (x / 100) * imgWidth;
-    const pinY = (y / 100) * imgHeight;
-
-    // Get container dimensions
+    // Get bounding rectangles for container and image
     const container = containerRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const imgRect = imgRef.current.getBoundingClientRect();
+
+    // Calculate the image's position relative to the container's current scroll position
+    const imgTopRelativeToContainer = imgRect.top - containerRect.top + container.scrollTop;
+    const imgLeftRelativeToContainer = imgRect.left - containerRect.left + container.scrollLeft;
+
+    // Calculate pin's position within the image (as pixels from top-left)
+    const pinXPixels = (x / 100) * imgRect.width;
+    const pinYPixels = (y / 100) * imgRect.height;
+
+    // Calculate absolute scroll positions to the pin
+    const pinAbsoluteX = imgLeftRelativeToContainer + pinXPixels;
+    const pinAbsoluteY = imgTopRelativeToContainer + pinYPixels;
+
+    // Calculate scroll position to center the pin in the viewport
     const containerWidth = container.clientWidth;
     const containerHeight = container.clientHeight;
-
-    // Calculate scroll position to center the pin
-    const scrollLeft = pinX - containerWidth / 2;
-    const scrollTop = pinY - containerHeight / 2;
+    const scrollLeft = pinAbsoluteX - containerWidth / 2;
+    const scrollTop = pinAbsoluteY - containerHeight / 2;
 
     // Scroll smoothly to the pin
     container.scrollTo({

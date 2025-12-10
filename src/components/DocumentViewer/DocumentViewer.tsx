@@ -156,21 +156,23 @@ export function DocumentViewer({
       const canvas = pageContainer.querySelector('canvas');
       if (!canvas) return;
 
-      // Get the canvas's rendered (displayed) dimensions
+      // Get bounding rectangles for all elements
+      const containerRect = container.getBoundingClientRect();
       const canvasRect = canvas.getBoundingClientRect();
-      const canvasHeight = canvasRect.height;
 
-      // Calculate pin position
-      const pageTop = pageElement.offsetTop;
-      const canvasTop = (pageContainer as HTMLElement).offsetTop + (canvas as HTMLElement).offsetTop;
+      // Calculate the canvas's position relative to the container's current scroll position
+      // canvasRect.top is relative to viewport, so we need to adjust for scroll
+      const canvasTopRelativeToContainer = canvasRect.top - containerRect.top + container.scrollTop;
 
-      // Calculate pin's absolute position using displayed height
-      const pinYPixels = (y / 100) * canvasHeight;
-      const absolutePinY = pageTop + canvasTop + pinYPixels;
+      // Calculate pin's Y position within the canvas (as pixels from top)
+      const pinYPixels = (y / 100) * canvasRect.height;
 
-      // Calculate scroll position to center the pin
+      // Calculate absolute scroll position to the pin
+      const pinAbsoluteY = canvasTopRelativeToContainer + pinYPixels;
+
+      // Calculate scroll position to center the pin in the viewport
       const containerHeight = container.clientHeight;
-      const targetScrollTop = absolutePinY - containerHeight / 2;
+      const targetScrollTop = pinAbsoluteY - containerHeight / 2;
 
       // Scroll to the pin location
       container.scrollTo({
