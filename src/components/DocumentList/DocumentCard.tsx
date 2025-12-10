@@ -69,9 +69,9 @@ export function DocumentCard({ document }: DocumentCardProps) {
     setIsDeleting(true);
     try {
       // Delete all associated data
-      await db.transaction('rw', ['documents', 'versions', 'comments', 'markups'], async () => {
-        // Delete all markups for this document
-        await db.markups.where('documentId').equals(document.id).delete();
+      await db.transaction('rw', ['documents', 'versions', 'comments', 'workflowEvents'], async () => {
+        // Delete all workflow events for this document
+        await db.workflowEvents.where('documentId').equals(document.id).delete();
 
         // Delete all comments for this document
         await db.comments.where('documentId').equals(document.id).delete();
